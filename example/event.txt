@@ -1,0 +1,60 @@
+trip
+dovolena
+11.12.2007 10:00
+15.12.2007 17:31
+Ruassian
+weekly
+trip
+by plane
+11.12.2007 15:00
+12.12.2007 17:31
+Poland
+onetime
+birthday
+tata
+11.12.2007
+birthday
+Klara
+12.12.2007
+birthday
+Michal
+11.12.2007
+birthday
+Tereza
+11.12.2007
+meeting
+with friends
+03.04.2000 18:00
+19:00
+in cafe
+weekly
+meeting
+conference
+11.12.2005 10:10
+11:00
+conference room
+monthly
+birthday
+klara
+13.10.2007
+birthday
+Jan Svoboda
+03.04.2010
+trip
+holidays
+03.04.2009 14:30
+15.04.2009 12:30
+Belgium
+yearly
+trip
+winter
+13.04.2019 19:11
+15.04.2019 10:10
+Belgium
+weekly
+trip
+by car
+01.04.2020 01:01
+25.04.2020 10:30
+Germany
+onetime
