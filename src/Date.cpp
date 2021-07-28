@@ -68,14 +68,14 @@ void Date::setHour(int hour)
 {
 	ltm.tm_hour = hour;
 	timegm(&ltm);
-    
+
 }
 
 void Date::setMinute(int minute)
 {
 	ltm.tm_min = minute;
 	timegm(&ltm);
-    
+
 }
 
 int Date::getYear()const

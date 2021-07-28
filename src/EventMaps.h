@@ -16,23 +16,23 @@ public:
 	/**
 	 * add event
 	 * @param ptr shared_ptr event
-     * return false if event with name is already exist
+	 * return false if event with name is already exist
 	 */
 	bool addEvent(const shared_ptr<Event> ptr);
 
-    /**
+	/**
 	 * add the event to one of the repetition maps
 	 * @param ptr shared_ptr event was crected in function addEvent
 	 */
-    void addEventRepMap(shared_ptr<Event> ptr);
-    
-    /**
-     * remove event from one of the repetition maps
-     * @param ptr
-     * @param date old date of event
-     * @param rep old repetition of event
-     */
-    void eraseEventRepMap(shared_ptr<Event> ptr, const Date& date, repetitionOfAnEvent rep);
+	void addEventRepMap(shared_ptr<Event> ptr);
+
+	/**
+	 * remove event from one of the repetition maps
+	 * @param ptr
+	 * @param date old date of event
+	 * @param rep old repetition of event
+	 */
+	void eraseEventRepMap(shared_ptr<Event> ptr, const Date& date, repetitionOfAnEvent rep);
 
 	/**
 	 * find iterator event
@@ -51,7 +51,7 @@ public:
 	/**
 	 * get all events for day
 	 * @param date
-	 * @param vec vector of shared_ptr events where shared_ptr event will be added	 
+	 * @param vec vector of shared_ptr events where shared_ptr event will be added
 	 */
 	void getAllEventsForDay(const Date& date, vector<shared_ptr<Event>>& vec);
 

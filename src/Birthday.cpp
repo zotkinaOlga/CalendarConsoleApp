@@ -12,19 +12,19 @@ bool Birthday::changeDate(const Date& otherDate)
 
 bool Birthday::changeRepetition(repetitionOfAnEvent newRepetition)
 {
-    return newRepetition==yearly;
+	return newRepetition == yearly;
 }
 
 void Birthday::moveDay(int moveDay)
 {
-	date.setDay(date.getDay()+moveDay);
+	date.setDay(date.getDay() + moveDay);
 }
 
 void Birthday::Print(ostream& os) const
 {
 	os << "Birthday: " << name << '\n'
 		<< "Date: ";
-	date.printDate(os); 
+	date.printDate(os);
 	os << '\n';
 }
 
@@ -35,8 +35,9 @@ void Birthday::printName(ostream& os) const
 	{
 		s_name.resize(10);
 		s_name += "...";
-	}else
-	s_name.resize(13);
+	}
+	else
+		s_name.resize(13);
 
 	os << redColor << s_name;
 }

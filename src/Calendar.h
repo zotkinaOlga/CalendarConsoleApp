@@ -24,7 +24,7 @@ public:
 	 * add birthday
 	 * @param name
 	 * @param date
-     * return true if the birthday is successfully added
+	 * return true if the birthday is successfully added
 	 */
 	bool addBirthday(const string& name, const Date& date);
 
@@ -35,7 +35,7 @@ public:
 	 * @param endTime
 	 * @param place
 	 * @param rep repetitionOfAnEvent
-     * return true if the meeting is successfully added
+	 * return true if the meeting is successfully added
 	 */
 	bool addMeeting(const string& name, const Date& date, const Date& endTime, const string& place, repetitionOfAnEvent rep);
 
@@ -46,12 +46,12 @@ public:
 	 * @param endDate
 	 * @param country
 	 * @param rep repetitionOfAnEvent
-     * return true if the trip is successfully added
+	 * return true if the trip is successfully added
 	 */
 	bool addTrip(const string& name, const Date& startDate, const Date& endDate, const string& country, repetitionOfAnEvent rep);
 
 	/**
-	 * find in map compared by name iterator of the event 
+	 * find in map compared by name iterator of the event
 	 * @param nameEvent that is finded
 	 * return shared_ptr of the event
 	 */
@@ -136,7 +136,7 @@ public:
 
 	/**
 	 * move event for certain days
-     * @param nameEvent
+	 * @param nameEvent
 	 * @param amountOfDays on which you need to move events
 	 */
 	void moveEventForDays(const string& nameEvent, int amountOfDays);

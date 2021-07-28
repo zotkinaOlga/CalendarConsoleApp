@@ -10,7 +10,8 @@ void Interface::startAplication()
 	Calendar calendar;
 	while (true)
 	{
-		if (!processCommand(calendar))return;
+		if (!processCommand(calendar))
+			return;
 	}
 }
 
@@ -20,7 +21,7 @@ bool Interface::processCommand(Calendar& calendar)
 	MAIN_COMMAND command = mainMenu();
 	if (command == COM_ADD)
 	{
-
+		addMenu(calendar);
 	}
 	else if (command == COM_DELETE)
 	{
@@ -36,21 +37,21 @@ bool Interface::processCommand(Calendar& calendar)
 		int type = calendar.findInTypeMap(name);
 		switch (type)
 		{
-			case 1:
-			{
-				birthdayChangeMenu(name, calendar);
-				break;
-			}
-			case 2:
-			{
-				meetingChangeMenu(name, calendar);
-				break;
-			}
-			case 3:
-			{
-				tripChangeMenu(name, calendar);
-				break;
-			}
+		case 1:
+		{
+			birthdayChangeMenu(name, calendar);
+			break;
+		}
+		case 2:
+		{
+			meetingChangeMenu(name, calendar);
+			break;
+		}
+		case 3:
+		{
+			tripChangeMenu(name, calendar);
+			break;
+		}
 		}
 	}
 	else if (command == COM_SEARCH)
@@ -109,7 +110,7 @@ EVENT_TYPE Interface::enterTypeEvent()
 		cin >> type;
 		if (checkCin(cin) && checkCommand(type, '3')) {
 			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n'); return (EVENT_TYPE)(type-'0');
+			cin.ignore(numeric_limits<streamsize>::max(), '\n'); return (EVENT_TYPE)(type - '0');
 		}
 	}
 }
@@ -219,11 +220,11 @@ repetitionOfAnEvent Interface::enterRepetition()
 			<< "3. Yearly" << endl
 			<< "4. Onetime" << endl;
 		cin >> rep;
-		if (checkCin(cin) && checkCommand(rep, '4')) 
+		if (checkCin(cin) && checkCommand(rep, '4'))
 		{
 			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
-			return (repetitionOfAnEvent)(rep-'0');
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			return (repetitionOfAnEvent)(rep - '0');
 		}
 	}
 }
@@ -250,7 +251,7 @@ repetitionOfAnEvent Interface::enterRepetitionTrip(const Date& startDate, const 
 MAIN_COMMAND Interface::mainMenu()
 {
 	char choice;
-	while(true)
+	while (true)
 	{
 		cout << endl
 			<< "Enter what you want to do with the calendar:" << endl
@@ -266,8 +267,8 @@ MAIN_COMMAND Interface::mainMenu()
 		cin >> choice;
 		if (checkCin(cin) && checkCommand(choice, '8')) {
 			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
-            return (MAIN_COMMAND)(choice-'0');
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			return (MAIN_COMMAND)(choice - '0');
 		}
 	}
 }
@@ -359,7 +360,7 @@ void Interface::moveMenu(Calendar& calendar)
 MOVE_COMMAND Interface::printMoveMenu()
 {
 	char moveCom;
-	do{
+	do {
 		cout << endl << "Enter how you want to move the event:" << endl
 			<< "0. Return to main menu" << endl
 			<< "1. For some days" << endl
@@ -368,7 +369,7 @@ MOVE_COMMAND Interface::printMoveMenu()
 	} while (!checkCin(cin) || !(checkCommand(moveCom, '2')));
 	cin.clear();
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	return (MOVE_COMMAND)(moveCom-'0');
+	return (MOVE_COMMAND)(moveCom - '0');
 }
 
 void Interface::birthdayChangeMenu(const string& name, Calendar& calendar)
@@ -395,7 +396,7 @@ CHANGE_COMMAND Interface::printBirthdayChangeMenu()
 	} while (!checkCin(cin) || !checkCommand(changeCom, '2'));
 	cin.clear();
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	return (CHANGE_COMMAND)(changeCom-'0');
+	return (CHANGE_COMMAND)(changeCom - '0');
 }
 
 void Interface::meetingChangeMenu(const string& name, Calendar& calendar)
@@ -444,7 +445,7 @@ CHANGE_COMMAND Interface::printMeetingChangeMenu()
 	} while (!checkCin(cin) || !checkCommand(changeCom, '5'));
 	cin.clear();
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	return (CHANGE_COMMAND)(changeCom-'0');
+	return (CHANGE_COMMAND)(changeCom - '0');
 }
 
 void Interface::tripChangeMenu(const string& name, Calendar& calendar)
@@ -496,7 +497,7 @@ CHANGE_COMMAND Interface::printTripChangeMenu()
 	} while (!checkCin(cin) || !checkCommand(changeCom, '5'));
 	cin.clear();
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	return (CHANGE_COMMAND)(changeCom-'0');
+	return (CHANGE_COMMAND)(changeCom - '0');
 }
 
 void Interface::changeName(const string& oldName, Calendar& calendar)
@@ -521,12 +522,12 @@ void Interface::searchMenu(Calendar& calendar)
 		cout << oss.str();
 	}
 	else if (searchCom == SEARCH_FD)
-    {
-        Date freeDate=calendar.searchTheEarestFreeDate(enterDateWithoutTime(""));
-        ostringstream oss;
-        freeDate.printDate(oss);
-        cout << "The earlest free day is " << oss.str() << endl;
-    }
+	{
+		Date freeDate = calendar.searchTheEarestFreeDate(enterDateWithoutTime(""));
+		ostringstream oss;
+		freeDate.printDate(oss);
+		cout << "The earlest free day is " << oss.str() << endl;
+	}
 	else return;
 }
 
@@ -543,7 +544,7 @@ SEARCH_COMMAND Interface::printSearchMenu()
 	} while (!checkCin(cin) || (!checkCommand(searchCom, '2')));
 	cin.clear();
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	return (SEARCH_COMMAND)(searchCom-'0');
+	return (SEARCH_COMMAND)(searchCom - '0');
 }
 
 void Interface::printMenu(Calendar& calendar)
@@ -551,23 +552,24 @@ void Interface::printMenu(Calendar& calendar)
 	CALENDAR_TYPE typeCalendar = printPrintMenu();
 	if (typeCalendar == C_DAILY)
 	{
-        Date date = enterDateWithoutTime("");
+		Date date = enterDateWithoutTime("");
 		calendar.getDailyCalendar(date);
 	}
 	else if (typeCalendar == C_WEEKLY)
 	{
-        Date date = enterDateWithoutTime("");
+		Date date = enterDateWithoutTime("");
 		calendar.headerMonth(date.getIntMonth());
 		calendar.headerWdays();
 		calendar.getWeeklyCalendar(date);
 	}
 	else if (typeCalendar == C_MONTHLY)
 	{
-        Date date = enterDateWithoutTime("");
+		Date date = enterDateWithoutTime("");
 		calendar.headerMonth(date.getIntMonth());
 		calendar.headerWdays();
 		calendar.getMonthlyCalendar(date);
-	} else return;
+	}
+	else return;
 }
 
 CALENDAR_TYPE Interface::printPrintMenu()
@@ -584,7 +586,7 @@ CALENDAR_TYPE Interface::printPrintMenu()
 	} while (!checkCin(cin) || !checkCommand(typeCalendar, '3'));
 	cin.clear();
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	return (CALENDAR_TYPE)(typeCalendar-'0');
+	return (CALENDAR_TYPE)(typeCalendar - '0');
 }
 
 void Interface::exportMenu(Calendar& calendar)
@@ -613,33 +615,33 @@ void Interface::importMenu(Calendar& calendar)
 	{
 		string type;
 		getline(file, type);
-        if (type == birthdayType)
+		if (type == birthdayType)
 		{
 			if (!importBirthday(calendar, file))
-            {
-                cout << "Error" << endl;
-                break;
-            }
+			{
+				cout << "Error" << endl;
+				break;
+			}
 		}
 		else if (type == meetingType)
 		{
-			if(!importMeeting(calendar, file))
-            {
-                cout << "Error" << endl;
-                break;
-            }
+			if (!importMeeting(calendar, file))
+			{
+				cout << "Error" << endl;
+				break;
+			}
 		}
 		else if (type == tripType)
 		{
-			if(!importTrip(calendar, file))
-            {
-                cout << "Error" << endl;
-                break;
-            }
+			if (!importTrip(calendar, file))
+			{
+				cout << "Error" << endl;
+				break;
+			}
 		}
 		else
 		{
-            if(!file.eof()) cout << "Error type of event" << endl;
+			if (!file.eof()) cout << "Error type of event" << endl;
 			break;
 		}
 	}
@@ -650,12 +652,12 @@ bool Interface::importBirthday(Calendar& calendar, ifstream& file)
 {
 	string name, s_date;
 	getline(file, name);
-    getline(file, s_date);
-    istringstream oss(s_date);
-    struct tm t = {};
-    oss >> get_time(&t,"%d.%m.%Y");
-    if (oss.fail() || !ifTmValid(t)) return false;
-    Date date(t);
+	getline(file, s_date);
+	istringstream oss(s_date);
+	struct tm t = {};
+	oss >> get_time(&t, "%d.%m.%Y");
+	if (oss.fail() || !ifTmValid(t)) return false;
+	Date date(t);
 	return calendar.addBirthday(name, date);
 }
 
@@ -664,19 +666,19 @@ bool Interface::importMeeting(Calendar& calendar, ifstream& file)
 	string name, s_date, s_endTime, place, repetition;
 	getline(file, name);
 	getline(file, s_date);
-    istringstream oss(s_date);
-    struct tm t = {};
-    oss >> get_time(&t,"%d.%m.%Y %H:%M");
-    if (oss.fail()|| !ifTmValid(t)) return false;
-    Date startDate(t);
+	istringstream oss(s_date);
+	struct tm t = {};
+	oss >> get_time(&t, "%d.%m.%Y %H:%M");
+	if (oss.fail() || !ifTmValid(t)) return false;
+	Date startDate(t);
 	getline(file, s_endTime);
-    istringstream end(s_endTime);
-    struct tm endTm = t;
-    end >> get_time(&endTm,"%H:%M");
-    if (end.fail()) return false;
-    struct tm startTm = startDate.getStructTm();
+	istringstream end(s_endTime);
+	struct tm endTm = t;
+	end >> get_time(&endTm, "%H:%M");
+	if (end.fail()) return false;
+	struct tm startTm = startDate.getStructTm();
 	if (difftime(timegm(&endTm), timegm(&startTm)) < secInTenMinutes) return false;
-    Date endTime(endTm);
+	Date endTime(endTm);
 	getline(file, place);
 	getline(file, repetition);
 	return calendar.addMeeting(name, startDate, endTime, place, getRepetition(repetition));
@@ -687,19 +689,19 @@ bool Interface::importTrip(Calendar& calendar, ifstream& file)
 	string name, s_date, dateEnd, country, repetition;
 	getline(file, name);
 	getline(file, s_date);
-    istringstream oss(s_date);
-    struct tm t = {};
-    oss >> get_time(&t,"%d.%m.%Y %H:%M");
-    if (oss.fail()|| !ifTmValid(t)) return false;
-    Date startDate(t);
+	istringstream oss(s_date);
+	struct tm t = {};
+	oss >> get_time(&t, "%d.%m.%Y %H:%M");
+	if (oss.fail() || !ifTmValid(t)) return false;
+	Date startDate(t);
 	getline(file, dateEnd);
-    istringstream end(dateEnd);
-    struct tm endTm = {};
-    end >> get_time(&endTm,"%d.%m.%Y %H:%M");
-    if (end.fail() || !ifTmValid(endTm)) return false;
-    struct tm startTm = startDate.getStructTm();
+	istringstream end(dateEnd);
+	struct tm endTm = {};
+	end >> get_time(&endTm, "%d.%m.%Y %H:%M");
+	if (end.fail() || !ifTmValid(endTm)) return false;
+	struct tm startTm = startDate.getStructTm();
 	if (difftime(timegm(&endTm), timegm(&startTm)) < secInDay) return false;
-    Date endDate(endTm);
+	Date endDate(endTm);
 	getline(file, country);
 	getline(file, repetition);
 	return calendar.addTrip(name, startDate, endDate, country, getRepetition(repetition));

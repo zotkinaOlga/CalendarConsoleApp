@@ -2,9 +2,10 @@
 #include "Calendar.h"
 #include "konstanty.h"
 
-bool comp(const shared_ptr<Event>& x, const shared_ptr<Event>& y){
-    return x->getDate().getHour() < y->getDate().getHour()
-        || (x->getDate().getHour() == y->getDate().getHour() && x->getDate().getMinute() < y->getDate().getMinute()); }
+bool comp(const shared_ptr<Event>& x, const shared_ptr<Event>& y) {
+	return x->getDate().getHour() < y->getDate().getHour()
+		|| (x->getDate().getHour() == y->getDate().getHour() && x->getDate().getMinute() < y->getDate().getMinute());
+}
 
 Calendar::Calendar()
 {
@@ -56,9 +57,9 @@ bool Calendar::deleteEvent(const string& nameEvent)
 bool Calendar::changeNameEvent(const string& oldName, const string& newName)
 {
 	if (ifEventExist(newName)) return false;
-	calendarEvent.changeNameOf(oldName,newName);
-    calendarMeetings.tryOverwriteName(oldName,newName);
-    calendarTrips.tryOverwriteName(oldName,newName);
+	calendarEvent.changeNameOf(oldName, newName);
+	calendarMeetings.tryOverwriteName(oldName, newName);
+	calendarTrips.tryOverwriteName(oldName, newName);
 	return true;
 }
 
@@ -94,7 +95,7 @@ void Calendar::changePlaceOfMeeting(const string& nameMeeting, const string& new
 
 void Calendar::moveEventForDays(const string& nameEvent, int amountOfDays)
 {
-    calendarEvent.moveDayOf(nameEvent,amountOfDays);
+	calendarEvent.moveDayOf(nameEvent, amountOfDays);
 }
 
 Date Calendar::searchTheEarestFreeDate(const Date& date)
@@ -118,7 +119,7 @@ void Calendar::moveEventToTheEarestFreeDate(const string& eventName)
 	Date freeDate = searchTheEarestFreeDate(startDate);
 	struct tm freeTm = freeDate.getStructTm();
 	int amountOfDays = ceil(difftime(mktime(&freeTm), mktime(&startTm)) / secInDay);
-	calendarEvent.moveDayOf(eventName,amountOfDays);
+	calendarEvent.moveDayOf(eventName, amountOfDays);
 }
 
 void Calendar::getSizeWhitespaces(int& begin, int& end, int lengthSegment, int lengthWord) const
@@ -170,7 +171,7 @@ void Calendar::getDailyCalendar(const Date& date)
 {
 	vector<shared_ptr<Event>> dailyEvents;
 	calendarEvent.getAllEventsForDay(date, dailyEvents);
-    sort(dailyEvents.begin(), dailyEvents.end(), comp);
+	sort(dailyEvents.begin(), dailyEvents.end(), comp);
 	hearderLine(20);
 	cout << "|";
 	printWhitespace(1);
@@ -184,10 +185,10 @@ void Calendar::getDailyCalendar(const Date& date)
 		ostringstream oss;
 		dailyEvents[j]->printName(oss);
 		struct tm dateTm = dailyEvents[j]->getDate().getStructTm();
-        int begin, end;
-        getSizeWhitespaces(begin,end,13,dailyEvents[j]->getName().length());
-		cout << clear << "|" << oss.str(); printWhitespace(begin+end); 
-        cout << put_time((&dateTm), "%R") << clear << "|" << endl;
+		int begin, end;
+		getSizeWhitespaces(begin, end, 13, dailyEvents[j]->getName().length());
+		cout << clear << "|" << oss.str(); printWhitespace(begin + end);
+		cout << put_time((&dateTm), "%R") << clear << "|" << endl;
 	}
 	cout << clear;
 	hearderLine(20);
@@ -229,7 +230,8 @@ void Calendar::getWeeklyCalendar(const Date& date)
 					s.resize(7);
 					s += "...";
 				}
-			} else s = "";
+			}
+			else s = "";
 			cout << "|" << setfill(' ') << setw(10) << left << s;
 		}
 		cout << "|" << endl;
@@ -239,9 +241,9 @@ void Calendar::getWeeklyCalendar(const Date& date)
 
 void Calendar::getMonthlyCalendar(const Date& date)
 {
-    Date start = date;
-    start.setDay(1);
-    start = start.getSunday();
+	Date start = date;
+	start.setDay(1);
+	start = start.getSunday();
 	while (start.getIntMonth() <= date.getIntMonth())
 	{
 		getWeeklyCalendar(start);
