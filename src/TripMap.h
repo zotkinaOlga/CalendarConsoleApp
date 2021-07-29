@@ -21,22 +21,22 @@ public:
 	 * @param tripName
 	 * return iterator trip
 	 */
-	map<string, shared_ptr<Trip>>::iterator findIteratorTrip(const string& tripName);
+	map<string, shared_ptr<Trip>>::const_iterator findIteratorTrip(const string& tripName) const;
 
 	/**
 	 * check if trip exist
 	 * @param name
 	 * return true in trip in map exist
 	 */
-	bool ifTripExist(const string& name);
+	bool ifTripExist(const string& name) const const;
 
-    /**
-     * overwrite event with new name if event exist
-     * @param oldName
-     * @param newName
-     */
-    void tryOverwriteName(const string& oldName, const string& newName);
-    
+	/**
+	 * overwrite event with new name if event exist
+	 * @param oldName
+	 * @param newName
+	 */
+	void tryOverwriteName(const string& oldName, const string& newName);
+
 	/**
 	 * change country of trip
 	 * @param tripName

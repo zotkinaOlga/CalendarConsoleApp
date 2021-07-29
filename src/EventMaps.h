@@ -39,56 +39,56 @@ public:
 	 * @param name
 	 * return iterator event
 	 */
-	map<string, shared_ptr<Event>>::iterator findIteratorEvent(const string& name);
+	map<string, shared_ptr<Event>>::const_iterator findIteratorEvent(const string& name) const;
 
 	/**
 	 * check if event exist
 	 * @param name
 	 * return true if event exist
 	 */
-	bool ifEventExist(const string& name);
+	bool ifEventExist(const string& name) const;
 
 	/**
 	 * get all events for day
 	 * @param date
 	 * @param vec vector of shared_ptr events where shared_ptr event will be added
 	 */
-	void getAllEventsForDay(const Date& date, vector<shared_ptr<Event>>& vec);
+	void getAllEventsForDay(const Date& date, vector<shared_ptr<Event>>& vec) const;
 
 	/**
 	 * add to vector events that have onetime repetition at or less that this date
 	 * @param date
 	 * @param vec vector of shared_ptr events where shared_ptr event will be added
 	 */
-	void oneTimeEventForDay(const Date& date, vector<shared_ptr<Event>>& vec);
+	void oneTimeEventForDay(const Date& date, vector<shared_ptr<Event>>& vec) const;
 
 	/**
 	 * add to vector events that have daily repetition at or less that this date
 	 * @param date
 	 * @param vec vector of shared_ptr events where shared_ptr event will be added
 	 */
-	void DailyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec);
+	void dailyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec) const;
 
 	/**
 	 * add to vector events that have weekly repetition at or less that this date
 	 * @param date
 	 * @param vec vector of shared_ptr events where shared_ptr event will be added
 	 */
-	void WeeklyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec);
+	void weeklyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec) const;
 
 	/**
 	 * add to vector events that have monthly repetition at or less that this date
 	 * @param date
 	 * @param vec vector of shared_ptr events where shared_ptr event will be added
 	 */
-	void MonthlyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec);
+	void monthlyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec) const;
 
 	/**
 	 * add to vector events that have yearly repetition at or less that this date
 	 * @param date
 	 * @param vec vector of shared_ptr events where shared_ptr event will be added
 	 */
-	void YearlyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec);
+	void yearlyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec) const;
 
 	/**
 	 * change date of event

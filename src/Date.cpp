@@ -1,9 +1,7 @@
 ﻿#include "Date.h"
-#include "konstanty.h"
+#include "constants.h"
 
-Date::Date()
-{
-}
+Date::Date(){}
 
 Date::Date(int year, int month, int day, int hour, int minute)
 {
@@ -24,12 +22,14 @@ Date::Date(const tm& t)
 
 bool Date::operator==(const Date& x) const
 {
-	return std::make_tuple(ltm.tm_year, ltm.tm_mon, ltm.tm_mday, ltm.tm_hour, ltm.tm_min) == std::make_tuple(x.ltm.tm_year, x.ltm.tm_mon, x.ltm.tm_mday, x.ltm.tm_hour, x.ltm.tm_min);
+	return make_tuple(ltm.tm_year, ltm.tm_mon, ltm.tm_mday, ltm.tm_hour, ltm.tm_min) 
+		== make_tuple(x.ltm.tm_year, x.ltm.tm_mon, x.ltm.tm_mday, x.ltm.tm_hour, x.ltm.tm_min);
 }
 
 bool Date::operator<(const Date& x) const
 {
-	return std::make_tuple(ltm.tm_year, ltm.tm_mon, ltm.tm_mday, ltm.tm_hour, ltm.tm_min) < std::make_tuple(x.ltm.tm_year, x.ltm.tm_mon, x.ltm.tm_mday, x.ltm.tm_hour, x.ltm.tm_min);
+	return make_tuple(ltm.tm_year, ltm.tm_mon, ltm.tm_mday, ltm.tm_hour, ltm.tm_min) 
+		< make_tuple(x.ltm.tm_year, x.ltm.tm_mon, x.ltm.tm_mday, x.ltm.tm_hour, x.ltm.tm_min);
 }
 
 bool Date::operator>(const Date& x) const

@@ -11,7 +11,7 @@
 
 using namespace std;
 
-enum MAIN_COMMAND{COM_QUIT, COM_ADD, COM_DELETE, COM_CHANGE, COM_PRINT, COM_MOVE, COM_SEARCH, COM_EXPORT, COM_IMPORT};
+enum MAIN_COMMAND{COMMAND_QUIT, COMMAND_ADD, COMMAND_DELETE, COMMAND_CHANGE, COMMAND_PRINT, COMMAND_MOVE, COMMAND_SEARCH, COMMAND_EXPORT, COMMAND_IMPORT};
 enum EVENT_TYPE{EV_RETURN, BIRTHDAY, MEETING, TRIP};
 enum CALENDAR_TYPE{C_RETURN, C_DAILY, C_WEEKLY, C_MONTHLY};
 enum CHANGE_COMMAND{CH_RETURN, CHANGE_NAME, CHANGE_START_DATE, CHANGE_END, CHANGE_REPETITION, CHANGE_COUNTRY = 5, CHANGE_PLACE = 5};
@@ -46,20 +46,20 @@ public:
 	 * @param max number of command
 	 * return false if command is failed
 	 */
-	bool checkCommand(char command, char max);
+	bool checkCommand(char command, char max) const;
 
 	/**
 	 * check cin
 	 * @param cin
 	 * return false if cin is failed
 	 */
-	bool checkCin(istream& cin);
+	bool checkCin(istream& cin) const;
 
 	/**
 	 * get from console type of event
 	 * return type of event
 	 */
-	EVENT_TYPE enterTypeEvent();
+	EVENT_TYPE enterTypeEvent() const;
 
 	/**
 	 * get from console name of event
@@ -87,7 +87,7 @@ public:
 	 * @param t
 	 * return true if tm is valid
 	 */
-	bool ifTmValid(tm t);
+	bool ifTmValid(tm t) const;
 
 	/**
 	 * get from console hour and minute
@@ -127,7 +127,7 @@ public:
 	 * print main menu and get from console main command
 	 * return valid main command
 	 */
-	MAIN_COMMAND mainMenu();
+	MAIN_COMMAND mainMenu() const;
 
 	/**
 	 * print add menu
@@ -179,7 +179,7 @@ public:
 	 * print move menu and get from console move command
 	 * return valid move command
 	 */
-	MOVE_COMMAND printMoveMenu();
+	MOVE_COMMAND printMoveMenu() const;
 
 	/**
 	 * change name of all types of event
@@ -199,7 +199,7 @@ public:
 	 * print change menu of birthday and get from console change command
 	 * return valid change command
 	 */
-	CHANGE_COMMAND printBirthdayChangeMenu();
+	CHANGE_COMMAND printBirthdayChangeMenu() const;
 
 	/**
 	 * print meeting change menu
@@ -212,7 +212,7 @@ public:
 	 * print change menu of metting and get from console change command
 	 * return valid change command
 	 */
-	CHANGE_COMMAND printMeetingChangeMenu();
+	CHANGE_COMMAND printMeetingChangeMenu() const;
 
 	/**
 	 * print trip change menu
@@ -225,7 +225,7 @@ public:
 	 * print change menu of trip and get from console change command
 	 * return valid change command
 	 */
-	CHANGE_COMMAND printTripChangeMenu();
+	CHANGE_COMMAND printTripChangeMenu() const;
 
 	/**
 	 * search menu
@@ -237,7 +237,7 @@ public:
 	 * print search menu and get from console search command
 	 * return valid search command
 	 */
-	SEARCH_COMMAND printSearchMenu();
+	SEARCH_COMMAND printSearchMenu() const;
 
 	/**
 	 * call function which get a certain type of calendar
@@ -250,7 +250,7 @@ public:
 	 * print menu with types of calendar and get from console type of calendar: daily, weekly, monthly
 	 * return valid type of calendar
 	 */
-	CALENDAR_TYPE printPrintMenu();
+	CALENDAR_TYPE printPrintMenu() const;
 
 	/**
 	 * print export menu and export an event to file that has name of the event
@@ -266,7 +266,7 @@ public:
 	void importMenu(Calendar& calendar);
 
 	/**
-	 * import birthday
+	 * import events only birthday type
 	 * @param calendar
 	 * @param file
      * return true if the birthday is successfully imported
@@ -294,7 +294,7 @@ public:
 	 * @param s input string
 	 * return repetitionOfAnEvent
 	 */
-	repetitionOfAnEvent getRepetition(const string& s);
+	repetitionOfAnEvent getRepetition(const string& s) const;
 };
 #endif //CONSOLE_H
 

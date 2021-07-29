@@ -15,8 +15,9 @@ public:
 	 * constructor Birthday, repetition = yearly always
 	 * @param name
 	 * @param date
+	 * @param newRepetioin
 	 */
-	Birthday(const string& name, const Date& date);
+	Birthday(const string& name, const Date& date, repetitionOfAnEvent newRepetition);
 
 	/**
 	 * change date of birthday
@@ -42,7 +43,7 @@ public:
 	 * print birthday
 	 * @param os ostream where birthday printing is written
 	 */
-	void Print(ostream& os)const override;
+	void print(ostream& os) const override;
 
 	/**
 	 * print and color name of birthday

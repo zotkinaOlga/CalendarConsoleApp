@@ -1,9 +1,7 @@
 #include "Interface.h"
-#include <iomanip>
-#include "konstanty.h"
-Interface::Interface()
-{
-}
+#include "constants.h"
+
+Interface::Interface(){}
 
 void Interface::startAplication()
 {
@@ -11,7 +9,9 @@ void Interface::startAplication()
 	while (true)
 	{
 		if (!processCommand(calendar))
+		{
 			return;
+		}
 	}
 }
 
@@ -19,19 +19,19 @@ bool Interface::processCommand(Calendar& calendar)
 {
 	string type;
 	MAIN_COMMAND command = mainMenu();
-	if (command == COM_ADD)
+	if (command == COMMAND_ADD)
 	{
 		addMenu(calendar);
 	}
-	else if (command == COM_DELETE)
+	else if (command == COMMAND_DELETE)
 	{
 		deleteMenu(calendar);
 	}
-	else if (command == COM_MOVE)
+	else if (command == COMMAND_MOVE)
 	{
 		moveMenu(calendar);
 	}
-	else if (command == COM_CHANGE)
+	else if (command == COMMAND_CHANGE)
 	{
 		string name = enterName(calendar);
 		int type = calendar.findInTypeMap(name);
@@ -54,27 +54,30 @@ bool Interface::processCommand(Calendar& calendar)
 		}
 		}
 	}
-	else if (command == COM_SEARCH)
+	else if (command == COMMAND_SEARCH)
 	{
 		searchMenu(calendar);
 	}
-	else if (command == COM_PRINT)
+	else if (command == COMMAND_PRINT)
 	{
 		printMenu(calendar);
 	}
-	else if (command == COM_EXPORT)
+	else if (command == COMMAND_EXPORT)
 	{
 		exportMenu(calendar);
 	}
-	else if (command == COM_IMPORT)
+	else if (command == COMMAND_IMPORT)
 	{
 		importMenu(calendar);
 	}
-	else return false; //quit command
+	else
+	{
+		return false; //quit command
+	}
 	return true;
 }
 
-bool Interface::checkCommand(char command, char max)
+bool Interface::checkCommand(char command, char max) const
 {
 	if (command < '0' || command > max)
 	{
@@ -86,9 +89,10 @@ bool Interface::checkCommand(char command, char max)
 	return true;
 }
 
-bool Interface::checkCin(istream& cin)
+bool Interface::checkCin(istream& cin) const
 {
-	if (cin.fail()) {
+	if (cin.fail()) 
+	{
 		cout << "Parse failed" << endl;
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -97,7 +101,7 @@ bool Interface::checkCin(istream& cin)
 	return true;
 }
 
-EVENT_TYPE Interface::enterTypeEvent()
+EVENT_TYPE Interface::enterTypeEvent() const
 {
 	char type;
 	while (true)
@@ -108,7 +112,8 @@ EVENT_TYPE Interface::enterTypeEvent()
 			<< "2. Meeting" << endl
 			<< "3. Trip" << endl;
 		cin >> type;
-		if (checkCin(cin) && checkCommand(type, '3')) {
+		if (checkCin(cin) && checkCommand(type, '3')) 
+		{
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n'); return (EVENT_TYPE)(type - '0');
 		}
@@ -159,7 +164,7 @@ Date Interface::enterDateWithoutTime(const string& typeDate)
 	return Date(t);
 }
 
-bool Interface::ifTmValid(struct tm t)
+bool Interface::ifTmValid(struct tm t) const
 {
 	struct tm tTest = {};
 	tTest = t;
@@ -244,11 +249,14 @@ repetitionOfAnEvent Interface::enterRepetitionTrip(const Date& startDate, const 
 		{
 			cout << "Trip conflicts with dates by itself" << endl;
 		}
-		else return newRepetition;
+		else
+		{
+			return newRepetition;
+		}
 	}
 }
 
-MAIN_COMMAND Interface::mainMenu()
+MAIN_COMMAND Interface::mainMenu() const
 {
 	char choice;
 	while (true)
@@ -309,7 +317,7 @@ void Interface::addBirthdayMenu(Calendar& calendar)
 {
 	string name = enterNameNewEvent(calendar);
 	Date startDate(enterDateWithoutTime(""));
-	calendar.addBirthday(name, startDate);
+	calendar.addBirthday(name, startDate, yearly);
 }
 
 void Interface::addMeetingMenu(Calendar& calendar)
@@ -357,7 +365,7 @@ void Interface::moveMenu(Calendar& calendar)
 	else return;
 }
 
-MOVE_COMMAND Interface::printMoveMenu()
+MOVE_COMMAND Interface::printMoveMenu() const
 {
 	char moveCom;
 	do {
@@ -379,11 +387,17 @@ void Interface::birthdayChangeMenu(const string& name, Calendar& calendar)
 	{
 		changeName(name, calendar);
 	}
-	else if (changeCom == CHANGE_START_DATE) calendar.changeDate(name, enterDateWithoutTime(""));
-	else return;
+	else if (changeCom == CHANGE_START_DATE)
+	{
+		calendar.changeDate(name, enterDateWithoutTime(""));
+	}
+	else
+	{
+		return;
+	}
 }
 
-CHANGE_COMMAND Interface::printBirthdayChangeMenu()
+CHANGE_COMMAND Interface::printBirthdayChangeMenu() const
 {
 	char changeCom;
 	do
@@ -425,11 +439,17 @@ void Interface::meetingChangeMenu(const string& name, Calendar& calendar)
 	{
 		calendar.changeRepetition(name, enterRepetition());
 	}
-	else if (changeCom == CHANGE_PLACE) calendar.changePlaceOfMeeting(name, enterString("new place:"));
-	else return;
+	else if (changeCom == CHANGE_PLACE)
+	{
+		calendar.changePlaceOfMeeting(name, enterString("new place:"));
+	}
+	else
+	{
+		return;
+	}
 }
 
-CHANGE_COMMAND Interface::printMeetingChangeMenu()
+CHANGE_COMMAND Interface::printMeetingChangeMenu() const
 {
 	char changeCom;
 	do
@@ -477,11 +497,17 @@ void Interface::tripChangeMenu(const string& name, Calendar& calendar)
 			newRep = enterRepetition();
 		}
 	}
-	else if (changeCom == CHANGE_COUNTRY) calendar.changeCountryOfTrip(name, enterString("new country:"));
-	else return;
+	else if (changeCom == CHANGE_COUNTRY)
+	{
+		calendar.changeCountryOfTrip(name, enterString("new country:"));
+	}
+	else
+	{
+		return;
+	}
 }
 
-CHANGE_COMMAND Interface::printTripChangeMenu()
+CHANGE_COMMAND Interface::printTripChangeMenu() const
 {
 	char changeCom;
 	do
@@ -518,7 +544,7 @@ void Interface::searchMenu(Calendar& calendar)
 		string name = enterName(calendar);
 		ostringstream oss;
 		cout << endl;
-		calendar.findEvent(name)->Print(oss);
+		calendar.findEvent(name)->print(oss);
 		cout << oss.str();
 	}
 	else if (searchCom == SEARCH_FD)
@@ -528,10 +554,13 @@ void Interface::searchMenu(Calendar& calendar)
 		freeDate.printDate(oss);
 		cout << "The earlest free day is " << oss.str() << endl;
 	}
-	else return;
+	else
+	{
+		return;
+	}
 }
 
-SEARCH_COMMAND Interface::printSearchMenu()
+SEARCH_COMMAND Interface::printSearchMenu() const
 {
 	char searchCom;
 	do
@@ -569,10 +598,13 @@ void Interface::printMenu(Calendar& calendar)
 		calendar.headerWdays();
 		calendar.getMonthlyCalendar(date);
 	}
-	else return;
+	else
+	{
+		return;
+	}
 }
 
-CALENDAR_TYPE Interface::printPrintMenu()
+CALENDAR_TYPE Interface::printPrintMenu() const
 {
 	char typeCalendar;
 	do
@@ -597,7 +629,7 @@ void Interface::exportMenu(Calendar& calendar)
 	ostringstream oss;
 	fileName << name << ".txt";
 	ofstream file(fileName.str());
-	it->Print(oss);
+	it->print(oss);
 	file << oss.str();
 	file.close();
 }
@@ -641,7 +673,10 @@ void Interface::importMenu(Calendar& calendar)
 		}
 		else
 		{
-			if (!file.eof()) cout << "Error type of event" << endl;
+			if (!file.eof())
+			{
+				cout << "Error type of event" << endl;
+			}
 			break;
 		}
 	}
@@ -658,7 +693,7 @@ bool Interface::importBirthday(Calendar& calendar, ifstream& file)
 	oss >> get_time(&t, "%d.%m.%Y");
 	if (oss.fail() || !ifTmValid(t)) return false;
 	Date date(t);
-	return calendar.addBirthday(name, date);
+	return calendar.addBirthday(name, date, yearly);
 }
 
 bool Interface::importMeeting(Calendar& calendar, ifstream& file)
@@ -709,9 +744,24 @@ bool Interface::importTrip(Calendar& calendar, ifstream& file)
 
 repetitionOfAnEvent Interface::getRepetition(const string& s)
 {
-	if (s == m_daily) return daily;
-	else if (s == m_weekly) return weekly;
-	else if (s == m_monthly) return monthly;
-	else if (s == m_yearly) return yearly;
-	else return oneTime;
+	if (s == m_daily)
+	{
+		return daily;
+	}
+	else if (s == m_weekly)
+	{
+		return weekly;
+	}
+	else if (s == m_monthly)
+	{
+		return monthly;
+	}
+	else if (s == m_yearly)
+	{
+		return yearly;
+	}
+	else
+	{
+		return oneTime;
+	}
 }

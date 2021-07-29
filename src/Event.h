@@ -32,12 +32,6 @@ public:
 	 * @param repetition
 	 */
 	Event(const string& name, const Date& date, repetitionOfAnEvent repetition);
-	/**
-	 * constructor for Birthday. can not set a repetition of event, repetition is yearly always
-	 * @param name
-	 * @param date
-	 */
-	Event(const string& name, const Date& date);
 
 	virtual ~Event();
 
@@ -70,31 +64,31 @@ public:
 	 * a pure virtual function
 	 * @param os
 	 */
-	virtual void Print(ostream& os)const = 0;
+	virtual void print(ostream& os) const = 0;
 
 	/**
 	 * a pure virtual function
 	 * @param os
 	 */
-	virtual void printName(ostream& os)const = 0;
+	virtual void printName(ostream& os) const = 0;
 
 	/**
 	 * getter of date
 	 * return Date
 	 */
-	Date getDate()const;
+	Date getDate() const;
 
 	/**
 	 * getter of name
 	 * return name
 	 */
-	string getName()const;
+	string getName() const;
 
 	/**
 	 * getter of repetition
 	 * return repetitionOfAnEvent
 	 */
-	repetitionOfAnEvent getRepetition()const;
+	repetitionOfAnEvent getRepetition() const;
 protected:
 	string name; //must be unique
 	Date date;

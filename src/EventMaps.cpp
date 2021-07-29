@@ -2,18 +2,36 @@
 
 bool EventMaps::addEvent(const shared_ptr<Event> ptr)
 {
-	if (!eventByName.emplace(ptr->getName(), ptr).second) return false;
+	if (!eventByName.emplace(ptr->getName(), ptr).second)
+	{
+		return false;
+	}
 	addEventRepMap(ptr);
 	return true;
 }
 
 void EventMaps::addEventRepMap(shared_ptr<Event> ptr)
 {
-	if (ptr->getRepetition() == oneTime) eventOneTime.emplace(ptr->getDate(), ptr);
-	else if (ptr->getRepetition() == yearly) eventYearly.emplace(make_pair(make_pair(ptr->getDate().getIntMonth(), ptr->getDate().getDay()), ptr->getDate()), ptr);
-	else if (ptr->getRepetition() == monthly) eventMonthly.emplace(make_pair(ptr->getDate().getDay(), ptr->getDate()), ptr);
-	else if (ptr->getRepetition() == weekly) eventWeekly.emplace(make_pair(ptr->getDate().getIntWday(), ptr->getDate()), ptr);
-	else eventDaily.emplace(ptr->getDate(), ptr);
+	if (ptr->getRepetition() == oneTime)
+	{
+		eventOneTime.emplace(ptr->getDate(), ptr);
+	}
+	else if (ptr->getRepetition() == yearly)
+	{
+		eventYearly.emplace(make_pair(make_pair(ptr->getDate().getIntMonth(), ptr->getDate().getDay()), ptr->getDate()), ptr);
+	}
+	else if (ptr->getRepetition() == monthly)
+	{
+		eventMonthly.emplace(make_pair(ptr->getDate().getDay(), ptr->getDate()), ptr);
+	}
+	else if (ptr->getRepetition() == weekly)
+	{
+		eventWeekly.emplace(make_pair(ptr->getDate().getIntWday(), ptr->getDate()), ptr);
+	}
+	else
+	{
+		eventDaily.emplace(ptr->getDate(), ptr);
+	}
 }
 
 void EventMaps::eraseEventRepMap(shared_ptr<Event> ptr, const Date& date, repetitionOfAnEvent rep)
@@ -50,31 +68,31 @@ void EventMaps::eraseEventRepMap(shared_ptr<Event> ptr, const Date& date, repeti
 	}
 }
 
-map<string, shared_ptr<Event>>::iterator EventMaps::findIteratorEvent(const string& name)
+map<string, shared_ptr<Event>>::const_iterator EventMaps::findIteratorEvent(const string& name) const
 {
-	auto it = eventByName.find(name);
-	return it;
+	return eventByName.find(name);
 }
 
-bool EventMaps::ifEventExist(const string& name)
+bool EventMaps::ifEventExist(const string& name) const
 {
-	if (findIteratorEvent(name) == eventByName.end())
-		return false;
-	return true;
+	return findIteratorEvent(name) != eventByName.end();
 }
 
-void EventMaps::getAllEventsForDay(const Date& date, vector<shared_ptr<Event>>& vec)
+void EventMaps::getAllEventsForDay(const Date& date, vector<shared_ptr<Event>>& vec) const
 {
 	oneTimeEventForDay(date, vec);
-	DailyEventForDay(date, vec);
-	WeeklyEventForDay(date, vec);
-	MonthlyEventForDay(date, vec);
-	YearlyEventForDay(date, vec);
+	dailyEventForDay(date, vec);
+	weeklyEventForDay(date, vec);
+	monthlyEventForDay(date, vec);
+	yearlyEventForDay(date, vec);
 }
 
-void EventMaps::oneTimeEventForDay(const Date& date, vector<shared_ptr<Event>>& vec)
+void EventMaps::oneTimeEventForDay(const Date& date, vector<shared_ptr<Event>>& vec) const
 {
-	if (eventOneTime.empty()) return;
+	if (eventOneTime.empty())
+	{
+		return;
+	}
 	Date date1(date);
 	date1.setHour(0);
 	date1.setMinute(0);
@@ -82,7 +100,10 @@ void EventMaps::oneTimeEventForDay(const Date& date, vector<shared_ptr<Event>>& 
 	Date date2(date);
 	date2.setHour(23);
 	date2.setMinute(59);
-	if (it1 != eventOneTime.end() && it1->second->getDate() < date1) it1++;
+	if (it1 != eventOneTime.end() && it1->second->getDate() < date1)
+	{
+		it1++;
+	}
 	while (it1 != eventOneTime.end() && it1->first <= date2)
 	{
 		vec.push_back(it1->second);
@@ -90,14 +111,20 @@ void EventMaps::oneTimeEventForDay(const Date& date, vector<shared_ptr<Event>>& 
 	}
 }
 
-void EventMaps::DailyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec)
+void EventMaps::dailyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec) const
 {
-	if (eventDaily.empty()) return;
+	if (eventDaily.empty())
+	{
+		return;
+	}
 	Date date1(date);
 	date1.setHour(23);
 	date1.setMinute(59);
 	auto it1 = eventDaily.lower_bound(date1);
-	if (it1 != eventDaily.end() && it1->second->getDate() > date1) it1++;
+	if (it1 != eventDaily.end() && it1->second->getDate() > date1)
+	{
+		it1++;
+	}
 	while (it1 != eventDaily.end() && it1->second->getDate() <= date1)
 	{
 		vec.push_back(it1->second);
@@ -105,14 +132,20 @@ void EventMaps::DailyEventForDay(const Date& date, vector<shared_ptr<Event>>& ve
 	}
 }
 
-void EventMaps::WeeklyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec)
+void EventMaps::weeklyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec) const
 {
-	if (eventWeekly.empty()) return;
+	if (eventWeekly.empty())
+	{
+		return;
+	}
 	Date date1(date);
 	date1.setHour(23);
 	date1.setMinute(59);
 	auto it1 = eventWeekly.lower_bound(make_pair(date1.getIntWday(), date1));
-	if (it1 != eventWeekly.end() && it1->first.first > date1.getIntWday()) it1++;
+	if (it1 != eventWeekly.end() && it1->first.first > date1.getIntWday())
+	{
+		it1++;
+	}
 	while (it1 != eventWeekly.end() && it1->first.first == date1.getIntWday())
 	{
 		vec.push_back(it1->second);
@@ -120,15 +153,21 @@ void EventMaps::WeeklyEventForDay(const Date& date, vector<shared_ptr<Event>>& v
 	}
 }
 
-void EventMaps::MonthlyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec)
+void EventMaps::monthlyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec) const
 {
 	if (eventMonthly.empty()) return;
 	Date date1(date);
 	date1.setHour(23);
 	date1.setMinute(59);
 	auto it1 = eventMonthly.lower_bound(make_pair(date1.getDay(), date1));
-	if (it1 == eventMonthly.end()) return;
-	if (it1->second->getDate() > date1) it1++;
+	if (it1 == eventMonthly.end())
+	{
+		return;
+	}
+	if (it1->second->getDate() > date1)
+	{
+		it1++;
+	}
 	while (it1 != eventMonthly.end() && it1->first.first == date1.getDay())
 	{
 		vec.push_back(it1->second);
@@ -136,17 +175,24 @@ void EventMaps::MonthlyEventForDay(const Date& date, vector<shared_ptr<Event>>& 
 	}
 }
 
-void EventMaps::YearlyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec)
+void EventMaps::yearlyEventForDay(const Date& date, vector<shared_ptr<Event>>& vec) const
 {
-	if (eventYearly.empty()) return;
+	if (eventYearly.empty())
+	{
+		return;
+	}
 	Date date1(date);
 	date1.setHour(23);
 	date1.setMinute(59);
 	auto it1 = eventYearly.lower_bound(make_pair(make_pair(date1.getIntMonth(), date1.getDay()), date1));
-	if (it1 == eventYearly.end()) return;
-	if (it1->first.first.second < date1.getDay()
-		|| it1->first.first.first < date1.getIntMonth()
-		|| it1->first.second>date1) it1++;
+	if (it1 == eventYearly.end())
+	{
+		return;
+	}
+	if (it1->first.first.second < date1.getDay() || it1->first.first.first < date1.getIntMonth() || it1->first.second>date1)
+	{
+		it1++;
+	}
 	while (it1 != eventYearly.end() && it1->first.first.first == date1.getIntMonth() && it1->first.first.second == date1.getDay())
 	{
 		vec.push_back(it1->second);
@@ -200,6 +246,5 @@ void EventMaps::moveDayOf(const string& eventName, int moveDay)
 
 bool EventMaps::deleteEvent(const string& eventName)
 {
-	auto it = findIteratorEvent(eventName);
-	return eventByName.erase(it->first);
+	return eventByName.erase(findIteratorEvent(eventName)->first);
 }

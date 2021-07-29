@@ -8,18 +8,18 @@
 /**
  * @class Meeting
  * child class
- * have specific parameters: end time, place of meeting 
+ * have specific parameters: end time, place of meeting
  */
 class Meeting :public Event
 {
 public:
 	/**
 	 * constructor with specific informations
-     * @param name
-     * @param date
-     * @param repetition
+	 * @param name
+	 * @param date
+	 * @param repetition
 	 * @param endTime
-     * @param place
+	 * @param place
 	 */
 	Meeting(const string& name, const Date& date, repetitionOfAnEvent repetition, const Date& endTime, const string& place);
 
@@ -40,13 +40,13 @@ public:
 	 * print meeting
 	 * @param os ostream where meeting printing is written
 	 */
-	void Print(ostream& os)const override;
+	void print(ostream& os) const override;
 
 	/**
 	 * print and color name of the meeting
 	 * @param os ostream where the meeting printing is written
 	 */
-	void printName(ostream& os)const override;
+	void printName(ostream& os) const override;
 
 	/**
 	 * change end time of the meeting
@@ -54,26 +54,26 @@ public:
 	 * return true and change end time if meeting will last 10 minutes or more
 	 */
 	bool changeEndTime(const Date& newEndTime);
-    
-	/**
-     * getter place
-     * return place
-     */
-    string getPlace() const;
 
-    /**
-     * getter endTime
-     * return Date
-     */
+	/**
+	 * getter place
+	 * return place
+	 */
+	string getPlace() const;
+
+	/**
+	 * getter endTime
+	 * return Date
+	 */
 	Date getEndTime()const;
-	
-    /**
-     * setter place
-     * @param newPlace
-     */
+
+	/**
+	 * setter place
+	 * @param newPlace
+	 */
 	void setPlace(const string& newPlace);
 private:
-    Date endTime;
+	Date endTime;
 	string place;
 };
 #endif // MEETING_H

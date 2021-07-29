@@ -1,35 +1,37 @@
 ﻿#include "Meeting.h"
-#include "konstanty.h"
+#include "constants.h"
 
-Meeting::Meeting(const string& name, const Date& date, repetitionOfAnEvent repetition, const Date& endTime, const string& place) : Event(name, date,repetition), endTime(endTime), place(place)
-{
-}
+Meeting::Meeting(const string& name, const Date& date, repetitionOfAnEvent repetition, const Date& endTime, const string& place)
+	:Event(name, date, repetition), endTime(endTime), place(place){}
+
 bool Meeting::changeDate(const Date& newDate)
 {
 	Date newEndTimeForTest = newDate;
 	newEndTimeForTest.setHour(endTime.getHour());
 	newEndTimeForTest.setMinute(endTime.getMinute());
-    struct tm forTestTm = newEndTimeForTest.getStructTm();
-    struct tm newDateTm = newDate.getStructTm();
+	struct tm forTestTm = newEndTimeForTest.getStructTm();
+	struct tm newDateTm = newDate.getStructTm();
 	if (difftime(timegm(&forTestTm), timegm(&newDateTm)) < secInTenMinutes) return false;
 	date = newDate;
 	endTime = newEndTimeForTest;
 	return true;
 }
+
 void Meeting::moveDay(int moveDay)
 {
-	date = Date(date.getYear(),date.getIntMonth()+1,date.getDay()+moveDay,date.getHour(),date.getMinute());
-	endTime = Date(endTime.getYear(), endTime.getIntMonth()+1, endTime.getDay() + moveDay, endTime.getHour(), endTime.getMinute());
+	date = Date(date.getYear(), date.getIntMonth() + 1, date.getDay() + moveDay, date.getHour(), date.getMinute());
+	endTime = Date(endTime.getYear(), endTime.getIntMonth() + 1, 
+		endTime.getDay() + moveDay, endTime.getHour(), endTime.getMinute());
 }
 
-void Meeting::Print(ostream& os)const
+void Meeting::print(ostream& os) const
 {
-	os << "Meeting: " << name << '\n' 
-		<< "Date: "; 
-	date.printDate(os); 
+	os << "Meeting: " << name << '\n'
+		<< "Date: ";
+	date.printDate(os);
 	os << "End time: ";
-    endTime.printTime(os);
-    os << "Place: " << place;
+	endTime.printTime(os);
+	os << "Place: " << place;
 	os << '\n';
 }
 
@@ -43,7 +45,7 @@ void Meeting::printName(ostream& os) const
 	}
 	else
 		s_name.resize(13);
-	os << yellowColor << s_name ;
+	os << yellowColor << s_name;
 }
 
 bool Meeting::changeEndTime(const Date& newEndTime)
@@ -51,8 +53,8 @@ bool Meeting::changeEndTime(const Date& newEndTime)
 	Date newEndTimeForTest = endTime;
 	newEndTimeForTest.setHour(newEndTime.getHour());
 	newEndTimeForTest.setMinute(newEndTime.getMinute());
-    struct tm forTestTm = newEndTimeForTest.getStructTm();
-    struct tm dateTm = date.getStructTm();
+	struct tm forTestTm = newEndTimeForTest.getStructTm();
+	struct tm dateTm = date.getStructTm();
 	if (difftime(timegm(&forTestTm), timegm(&dateTm)) < secInTenMinutes) return false;
 	endTime = newEndTimeForTest;
 	return true;

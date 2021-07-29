@@ -1,8 +1,7 @@
 ﻿#include "Birthday.h"
-#include "konstanty.h"
-Birthday::Birthday(const string& name, const Date& date) : Event(name, date, yearly)
-{
-}
+#include "constants.h"
+
+Birthday::Birthday(const string& name, const Date& date, repetitionOfAnEvent newRepetition) : Event(name, date, yearly){}
 
 bool Birthday::changeDate(const Date& otherDate)
 {
@@ -20,7 +19,7 @@ void Birthday::moveDay(int moveDay)
 	date.setDay(date.getDay() + moveDay);
 }
 
-void Birthday::Print(ostream& os) const
+void Birthday::print(ostream& os) const
 {
 	os << "Birthday: " << name << '\n'
 		<< "Date: ";
@@ -37,7 +36,8 @@ void Birthday::printName(ostream& os) const
 		s_name += "...";
 	}
 	else
+	{
 		s_name.resize(13);
-
+	}
 	os << redColor << s_name;
 }

@@ -1,16 +1,10 @@
 #include "Event.h"
-#include "konstanty.h"
+#include "constants.h"
 
-Event::Event(const string& name, const Date& date, repetitionOfAnEvent repetition) : name(name), date(date), repetition(repetition)
-{
-}
-Event::~Event()
-{
-}
-Event::Event(const string& name, const Date& date) : name(name), date(date)
-{
-	repetition = oneTime;
-}
+Event::Event(const string& name, const Date& date, repetitionOfAnEvent repetition) : name(name), date(date), repetition(repetition){}
+
+Event::~Event(){}
+
 void Event::changeName(const string& newName)
 {
 	name = newName;

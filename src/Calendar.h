@@ -26,7 +26,7 @@ public:
 	 * @param date
 	 * return true if the birthday is successfully added
 	 */
-	bool addBirthday(const string& name, const Date& date);
+	bool addBirthday(const string& name, const Date& date, repetitionOfAnEvent rep);
 
 	/**
 	 * add meeting
@@ -154,33 +154,11 @@ public:
 	 */
 	void moveEventToTheEarestFreeDate(const string& eventName);
 
-	//FOR PRINT//
-	/**
-	 * calculate how many spaces should be left and right so that the word with this lenghth is in the middle of a segment of a certain size
-	 * @param begin count of whitespace that will be left
-	 * @param end count of whitespace that will be right
-	 * @param lengthSegment
-	 * @param lengthWord
-	 */
-	void getSizeWhitespaces(int& begin, int& end, int lengthSegment, int lengthWord) const;
-
-	/**
-	 * print a line separator
-	 * @param size of line of '-'
-	 */
-	void hearderLine(int size) const;
-
-	/**
-	 * print whitespace size times
-	 * @param size of segment with whitespaces
-	 */
-	void printWhitespace(int size) const;
-
 	/**
 	 * print the title with the name of the month
 	 * @param month [0-11]
 	 */
-	void headerMonth(int month)const;
+	void headerMonth(int month) const;
 
 	/**
 	 * print the title with wdays
@@ -208,6 +186,27 @@ private:
 	EventMaps calendarEvent;
 	MeetingMap calendarMeetings;
 	TripMap calendarTrips;
+
+	/**
+ * calculate how many spaces should be left and right so that the word with this lenghth is in the middle of a segment of a certain size
+ * @param begin count of whitespace that will be left
+ * @param end count of whitespace that will be right
+ * @param lengthSegment
+ * @param lengthWord
+ */
+	void getSizeWhitespaces(int& begin, int& end, int lengthSegment, int lengthWord) const;
+
+	/**
+	 * print a line separator
+	 * @param size of line of '-'
+	 */
+	void hearderLine(int size) const;
+
+	/**
+	 * print whitespace size times
+	 * @param size of segment with whitespaces
+	 */
+	void printWhitespace(int size) const;
 };
 
 #endif // CALENDAR_H

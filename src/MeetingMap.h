@@ -18,25 +18,18 @@ public:
 	void addMeeting(const shared_ptr<Meeting> ptr);
 
 	/**
-	 * find iterator meeting
-	 * @param name
-	 * return iterator meeting
-	 */
-	map<string, shared_ptr<Meeting>>::iterator findIteratorMeeting(const string& name);
-
-	/**
 	 * check if meeting exist
 	 * @param name
 	 * return true if metting exist
 	 */
 	bool ifMeetingExist(const string& name);
 
-    /**
-     * overwrite event with new name if event exist
-     * @param oldName
-     * @param newName
-     */
-    void tryOverwriteName(const string& oldName, const string& newName);
+	/**
+	 * overwrite event with new name if event exist
+	 * @param oldName
+	 * @param newName
+	 */
+	void tryOverwriteName(const string& oldName, const string& newName);
 
 	/**
 	 * @param name
@@ -54,6 +47,13 @@ public:
 
 private:
 	map<string, shared_ptr<Meeting>> meetingByName;
+
+	/**
+	 * find const iterator meeting
+	 * @param name
+	 * return const iterator meeting
+	 */
+	map<string, shared_ptr<Meeting>>::const_iterator findIteratorMeeting(const string& name) const;
 };
 
 #endif // MEETINGMAP_H
