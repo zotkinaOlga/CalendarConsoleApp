@@ -3,8 +3,8 @@ CFLAGS=-std=c++14 -Wall -pedantic -Wno-long-long -O0 -ggdb
 
 all: compile doc
 
-compile: main.o Interface.o Calendar.o EventMaps.o MeetingMap.o TripMap.o Event.o Birthday.o Meeting.o Trip.o Date.o
-	$(CC) $(CFLAGS) main.o Interface.o Calendar.o EventMaps.o MeetingMap.o TripMap.o Event.o Birthday.o Meeting.o Trip.o Date.o -o zotkiolg
+compile: main.o Interface.o Calendar.o EventMaps.o Event.o Task.o Meeting.o Trip.o Date.o
+	$(CC) $(CFLAGS) main.o Interface.o Calendar.o EventMaps.o Event.o Task.o Meeting.o Trip.o Date.o -o CalendarConsoleApp
 
 main.o:
 	$(CC) $(CFLAGS) -c src/main.cpp -o main.o
@@ -18,14 +18,8 @@ Calendar.o:
 EventMaps.o:
 	$(CC) $(CFLAGS) -c src/EventMaps.cpp -o EventMaps.o
 
-MeetingMap.o:
-	$(CC) $(CFLAGS) -c src/MeetingMap.cpp -o MeetingMap.o
-
-TripMap.o:
-	$(CC) $(CFLAGS) -c src/TripMap.cpp -o TripMap.o
-
-Birthday.o:
-	$(CC) $(CFLAGS) -c src/Birthday.cpp -o Birthday.o
+Task.o:
+	$(CC) $(CFLAGS) -c src/Birthday.cpp -o Task.o
 
 Meeting.o:
 	$(CC) $(CFLAGS) -c src/Meeting.cpp -o Meeting.o
@@ -40,10 +34,10 @@ Date.o:
 	$(CC) $(CFLAGS) -c src/Date.cpp -o Date.o
 
 clean:
-	rm -rf doc *.o doc ./zotkiolg
+	rm -rf doc *.o doc ./CalendarConsoleApp
 
 doc:
 	doxygen Doxyfile
 
 run:
-	./zotkiolg
+	./CalendarConsoleApp
