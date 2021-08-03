@@ -10,7 +10,7 @@ bool EventMaps::addEvent(const shared_ptr<Event> ptr)
 	return true;
 }
 
-void EventMaps::addEventRepMap(shared_ptr<Event> ptr)
+void EventMaps::addEventRepMap(const shared_ptr<Event> ptr)
 {
 	if (ptr->getRepetition() == oneTime)
 	{
@@ -34,36 +34,51 @@ void EventMaps::addEventRepMap(shared_ptr<Event> ptr)
 	}
 }
 
-void EventMaps::eraseEventRepMap(shared_ptr<Event> ptr, const Date& date, repetitionOfAnEvent rep)
+void EventMaps::eraseEventRepMap(const shared_ptr<Event> ptr, const Date& date, repetitionOfAnEvent rep)
 {
 	if (rep == oneTime)
 	{
 		auto it = eventOneTime.find(date);
-		for (; it->second->getName() != ptr->getName(); it++);
+		while (it->second->getName() != ptr->getName())
+		{
+			it++;
+		}
 		eventOneTime.erase(it);
 	}
 	else if (rep == yearly)
 	{
 		auto it = eventYearly.find(make_pair(make_pair(date.getIntMonth(), date.getDay()), date));
-		for (; it->second->getName() != ptr->getName(); it++);
+		while (it->second->getName() != ptr->getName())
+		{
+			it++;
+		}
 		eventYearly.erase(it);
 	}
 	else if (rep == monthly)
 	{
 		auto it = eventMonthly.find(make_pair(date.getDay(), date));
-		for (; it->second->getName() != ptr->getName(); it++);
+		while (it->second->getName() != ptr->getName())
+		{
+			it++;
+		}		
 		eventMonthly.erase(it);
 	}
 	else if (rep == weekly)
 	{
 		auto it = eventWeekly.find(make_pair(date.getIntWday(), date));
-		for (; it->second->getName() != ptr->getName(); it++);
+		while (it->second->getName() != ptr->getName())
+		{
+			it++;
+		}		
 		eventWeekly.erase(it);
 	}
 	else
 	{
 		auto it = eventDaily.find(date);
-		for (; it->second->getName() != ptr->getName(); it++);
+		while(it->second->getName() != ptr->getName())
+		{
+			it++;
+		}
 		eventDaily.erase(it);
 	}
 }
@@ -200,11 +215,19 @@ void EventMaps::yearlyEventForDay(const Date& date, vector<shared_ptr<Event>>& v
 	}
 }
 
-bool EventMaps::changeDateOf(const string& eventName, const Date& otherDate)
+void EventMaps::changeNameOf(const string& eventName, const string& newName)
+{
+	auto it = findIteratorEvent(eventName);
+	it->second->changeName(newName);
+	eventByName.emplace(newName, it->second);
+	eventByName.erase(it);
+}
+
+bool EventMaps::changeDateOf(const string& eventName, const Date& otherDate, ostream& os)
 {
 	auto it = findIteratorEvent(eventName);
 	Date oldDate = it->second->getDate();
-	if (it->second->changeDate(otherDate))
+	if (it->second->changeDate(otherDate, os))
 	{
 		auto itEvent = it->second;
 		eraseEventRepMap(itEvent, oldDate, itEvent->getRepetition());
@@ -214,19 +237,11 @@ bool EventMaps::changeDateOf(const string& eventName, const Date& otherDate)
 	return false;
 }
 
-void EventMaps::changeNameOf(const string& eventName, const string& newName)
-{
-	auto it = findIteratorEvent(eventName);
-	it->second->changeName(newName);
-	eventByName.emplace(newName, it->second);
-	eventByName.erase(it);
-}
-
-bool EventMaps::changeRepetitionOf(const string& eventName, repetitionOfAnEvent newRepetition)
+bool EventMaps::changeRepetitionOf(const string& eventName, repetitionOfAnEvent newRepetition, ostream& os)
 {
 	auto it = findIteratorEvent(eventName)->second;
 	repetitionOfAnEvent oldRep = it->getRepetition();
-	if (it->changeRepetition(newRepetition))
+	if (it->changeRepetition(newRepetition, os))
 	{
 		addEventRepMap(it);
 		eraseEventRepMap(it, it->getDate(), oldRep);
@@ -235,13 +250,29 @@ bool EventMaps::changeRepetitionOf(const string& eventName, repetitionOfAnEvent 
 	return false;
 }
 
-void EventMaps::moveDayOf(const string& eventName, int moveDay)
+bool EventMaps::changeEndDateOf(const string& eventName, const Date& newEndDate, ostream& os)
+{
+	auto it = findIteratorEvent(eventName)->second;
+	return it->changeEndDate(newEndDate, os);
+}
+
+void EventMaps::changeDescriptionOf(const string& eventName, const string& newDescription)
+{
+	auto it = findIteratorEvent(eventName);
+	it->second->changeDescription(newDescription);
+}
+
+bool EventMaps::moveDayOf(const string& eventName, int moveDay, ostream& os)
 {
 	auto it = findIteratorEvent(eventName)->second;
 	Date oldDate = it->getDate();
-	it->moveDay(moveDay);
+	if (!it->moveDay(moveDay, os))
+	{
+		return false;
+	}
 	addEventRepMap(it);
 	eraseEventRepMap(it, oldDate, it->getRepetition());
+	return true;
 }
 
 bool EventMaps::deleteEvent(const string& eventName)

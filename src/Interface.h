@@ -14,9 +14,9 @@ using namespace std;
 enum MAIN_COMMAND{COMMAND_QUIT, COMMAND_ADD, COMMAND_DELETE, COMMAND_CHANGE, COMMAND_PRINT, COMMAND_MOVE, COMMAND_SEARCH, COMMAND_EXPORT, COMMAND_IMPORT};
 enum EVENT_TYPE{EV_RETURN, BIRTHDAY, MEETING, TRIP};
 enum CALENDAR_TYPE{C_RETURN, C_DAILY, C_WEEKLY, C_MONTHLY};
-enum CHANGE_COMMAND{CH_RETURN, CHANGE_NAME, CHANGE_START_DATE, CHANGE_END, CHANGE_REPETITION, CHANGE_COUNTRY = 5, CHANGE_PLACE = 5};
+enum CHANGE_COMMAND{CH_RETURN, CHANGE_NAME, CHANGE_START_DATE, CHANGE_END, CHANGE_REPETITION, CHANGE_DESCRIPTION};
 enum SEARCH_COMMAND{S_RETURN, SEARCH_EVENT, SEARCH_FD};
-enum MOVE_COMMAND {M_RETURN, MOVE_SD,MOVE_FD};
+enum MOVE_COMMAND {M_RETURN, MOVE_SD, MOVE_FD};
 
 /**
  * @class Interface
@@ -34,9 +34,9 @@ public:
 	void startAplication();
 
 	/**
-	 * process main command
-	 * @param calendar
-	 * return false if was command "quit"
+	 * Process command of main menu
+	 * @param calendar[in, out]
+	 * @return false if command "quit"
 	 */
 	bool processCommand(Calendar& calendar);
 
@@ -66,21 +66,21 @@ public:
 	 * @param calendar
 	 * return name of event
 	 */
-	string enterName(Calendar& calendar);
+	string enterName(Calendar& calendar) const;
 
 	/**
 	 * get from console date with time
 	 * @param typeDate show the user which type of date is expected to be input
 	 * return date
 	 */
-	Date enterDateWithTime(const string& typeDate);
+	Date enterDateWithTime(const string& typeDate) const;
 
 	/**
 	 * get from console date without time
 	 * @param typeDate show the user which type of date is expected to be input
 	 * return date
 	 */
-	Date enterDateWithoutTime(const string& typeDate);
+	Date enterDateWithoutTime(const string& typeDate) const;
 
 	/**
 	 * check if struct tm is valid
@@ -94,34 +94,26 @@ public:
 	 * @param t
 	 * return Date endTime
 	 */
-	Date enterEndTime(struct tm t);
+	Date enterEndTime(struct tm t) const;
 
 	/**
 	 * get from console string
-	 * @param proPrint show the user which string type parameter is expected to be input
+	 * @param forPrint show the user which string type parameter is expected to be input
 	 * return string
 	 */
-	string enterString(const string& proPrint);
+	string enterString(const string& forPrint) const;
 
 	/**
 	 * get from console hour and minute
 	 * return amount of day for moving event
 	 */
-	int enterAmountOfDay();
+	int enterAmountOfDay() const;
 
 	/**
 	 * get from console type of repetition of event
 	 * return repetitionOfAnEvent of event
 	 */
-	repetitionOfAnEvent enterRepetition();
-
-	/**
-	 * get from console type of repetition of trip, check that the trip will no conflict with itself
-	 * @param start date
-	 * @param end date
-	 * return repetitionOfAnEvent of trip
-	 */
-	repetitionOfAnEvent enterRepetitionTrip(const Date& start, const Date& end);
+	repetitionOfAnEvent enterRepetition() const;
 
 	/**
 	 * print main menu and get from console main command
@@ -139,14 +131,14 @@ public:
 	 * get from console new name
 	 * @param calendar
 	 */
-	string enterNameNewEvent(Calendar& calendar);
+	string enterNameNewEvent(Calendar& calendar) const;
 
 	/**
-	 * get from console parameters of birthday
-	 * call finction which add birthday to calendar
+	 * get from console parameters of task
+	 * call finction which add task to calendar
 	 * @param calendar
 	 */
-	void addBirthdayMenu(Calendar& calendar);
+	void addTaskMenu(Calendar& calendar);
 
 	/**
 	 * get from console parameters of meeting
@@ -182,56 +174,42 @@ public:
 	MOVE_COMMAND printMoveMenu() const;
 
 	/**
+	 * print task change menu
+	 * @param name
+	 * @param calendar
+	 */
+	void changeMenu(const string& name, Calendar& calendar);
+
+	/**
+	 * print change menu of task and get from console change command
+	 * return valid change command
+	 */
+	CHANGE_COMMAND printChangeMenu(const shared_ptr<Event> ptr) const;
+
+	/**
 	 * change name of all types of event
 	 * @param oldName
 	 * @param calendar
 	 */
 	void changeName(const string& oldName, Calendar& calendar);
 
-	/**
-	 * print birtday change menu
-	 * @param name
-	 * @param calendar
-	 */
-	void birthdayChangeMenu(const string& name, Calendar& calendar);
+	void changeStartDate(const string& name, Calendar& calendar);
 
-	/**
-	 * print change menu of birthday and get from console change command
-	 * return valid change command
-	 */
-	CHANGE_COMMAND printBirthdayChangeMenu() const;
+	void changeEndDate(const string& name, Calendar& calendar);
 
-	/**
-	 * print meeting change menu
-	 * @param name
-	 * @param calendar
-	 */
-	void meetingChangeMenu(const string& name, Calendar& calendar);
+	void changeEndTime(shared_ptr<Event> itEvent, const string& name, Calendar& calendar);
 
-	/**
-	 * print change menu of metting and get from console change command
-	 * return valid change command
-	 */
-	CHANGE_COMMAND printMeetingChangeMenu() const;
+	void changeEndWholeDate(const string& name, const string& endAttribute, Calendar& calendar);
 
-	/**
-	 * print trip change menu
-	 * @param name
-	 * @param calendar
-	 */
-	void tripChangeMenu(const string& name, Calendar& calendar);
+	void changeRepetition(const string& name, Calendar& calendar);
 
-	/**
-	 * print change menu of trip and get from console change command
-	 * return valid change command
-	 */
-	CHANGE_COMMAND printTripChangeMenu() const;
+	void changeDescription(const string& name, Calendar& calendar);
 
 	/**
 	 * search menu
 	 * @param calendar
 	 */
-	void searchMenu(Calendar& calendar);
+	void searchMenu(Calendar& calendar) const;
 
 	/**
 	 * print search menu and get from console search command
@@ -239,12 +217,16 @@ public:
 	 */
 	SEARCH_COMMAND printSearchMenu() const;
 
+	void searchEvent(Calendar& calendar) const;
+
+	void searchFreeDay(Calendar& calendar) const;
+
 	/**
 	 * call function which get a certain type of calendar
 	 * call function which will print a certain type of calendar
 	 * @param calendar
 	 */
-	void printMenu(Calendar& calendar);
+	void printMenu(Calendar& calendar) const;
 
 	/**
 	 * print menu with types of calendar and get from console type of calendar: daily, weekly, monthly
@@ -252,11 +234,17 @@ public:
 	 */
 	CALENDAR_TYPE printPrintMenu() const;
 
+	void printDailyCalendar(Calendar& calendar) const;
+
+	void printWeeklyCalendar(Calendar& calendar) const;
+
+	void printMonthlyCalendar(Calendar& calendar) const;
+
 	/**
 	 * print export menu and export an event to file that has name of the event
 	 * @param calendar
 	 */
-	void exportMenu(Calendar& calendar);
+	void exportMenu(Calendar& calendar) const;
 
 	/**
 	 * get name of file and type of event
@@ -266,12 +254,12 @@ public:
 	void importMenu(Calendar& calendar);
 
 	/**
-	 * import events only birthday type
+	 * import events only task type
 	 * @param calendar
 	 * @param file
-     * return true if the birthday is successfully imported
+     * return true if the task is successfully imported
 	 */
-	bool importBirthday(Calendar& calendar, ifstream& file);
+	bool importTask(Calendar& calendar, ifstream& file);
 
 	/**
 	 * import meeting

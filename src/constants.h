@@ -6,14 +6,16 @@ using namespace std;
 const vector<string> wday = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 const vector<string> vectorMonth = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
-/**constants represent colors*/
+/**constants represent front and colors*/
 const string redColor = "\033[41m";
 const string yellowColor = "\033[43m";
 const string blueColor = "\033[46m";
 const string clear = "\033[0m";
+const string boldFront = "\033[1m";
+const string reversionFront = "\033[7m";
 
 /**constants represent types events*/
-const string birthdayType = "birthday";
+const string birthdayType = "task";
 const string meetingType = "meeting";
 const string tripType = "trip";
 
@@ -30,8 +32,8 @@ const string s_startDate = "start date";
 const string s_repetition = "repetition";
 const string s_endTime = "end hours and minutes";
 const string s_endDate = "end date";
-const string s_place = "place";
-const string s_country = "country";
+const string s_place = "description";
+const string s_country = "description";
 
 /**constants represent amounts seconds in day, week atd*/
 const  int secInDay = 86400;

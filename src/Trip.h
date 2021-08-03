@@ -3,84 +3,67 @@
 #include "Event.h"
 
 /**
- * @class Trip
- * child class
- * store specific parameters: end date of the trip, destination country
- * trip must last for at least one day and must not conflict with dates by itself
+ * @class Trip is a child class of class Event and no has own variables.
+ * The trip must last for at least one day and must not conflict with dates by itself.
+ * Provide printing an Trip object and changing all variables.
  */
 class Trip : public Event
 {
 public:
 	/**
-	 * constructor with specific informations
+	 * Constructor with specific informations
 	 * @param name
 	 * @param startDate
 	 * @param rep
-	 * @param endDate
-	 * @param country
+	 * @param endDate at least a day later than the start time
+	 * @param description
 	 */
-	Trip(const string& name, const Date& startDate, repetitionOfAnEvent rep, const Date& endDate, const string& country);
+	Trip(const string& name, const Date& startDate, repetitionOfAnEvent rep, const Date& endDate, const string& description);
 
 	/**
-	 * change the start date of the trip
-	 * @param otherDate
-	 * return true if difference between start date of the trip and end date of the trip at least one day and change start date
+	 * Change 'repetition' to any value.
+	 * Start date and end date must not overlap.
+	 * @param newRepetition[in]
+	 * @return true if the trip will not conflict with dates by itself and change 'repetition' or false if will be conflict and leave original argument
 	 */
-	bool changeDate(const Date& otherDate) override;
+	bool changeRepetition(repetitionOfAnEvent newRepetition, ostream& os) override;
 
 	/**
-	 * change the repetition of the trip
-	 * @param newRepetition
-	 * return true if the trip will not conflict with dates by itself
+	 * Change 'date' and check that the trip will be longer that 1 day.
+	 * @param otherDate[in]
+	 * @return true if difference between 'date' and 'endDate' at least one day and change start date or false if not
 	 */
-	bool changeRepetition(repetitionOfAnEvent newRepetition) override;
+	bool changeDate(const Date& otherDate, ostream& os) override;
 
 	/**
-	 * move the trip for some days, move start date and end date for some days
-	 * @param moveDay amount of days to move the trip
+	 * Change 'endDate' and check that 'date' more that 'otherDate' for at least 1 day.
+	 * @param otherDate[in]
+	 * @return true if the trip will be longer that 1 day and change 'endDate' or false if no and leave original end date
 	 */
-	void moveDay(int moveDay) override;
+	bool changeEndDate(const Date& otherDate, ostream& os) override;
 
 	/**
-	 * print the trip
-	 * @param os ostream where the trip printing is written
+	 * Send variables 'name', 'date', 'endDate' and 'descriprion' of an object to ostream for printing in the format:
+	 * "Trip: 'name'
+	 *	Start date: day_of_week day month year hour:minute
+	 *  End date: day_of_week day month year hour:minute
+	 *  Description: 'description'".
+	 * @param os[in, out] stream to which the data for printing is sent
 	 */
 	void print(ostream& os) const override;
 
 	/**
-	 * print and color name of the trip
-	 * @param os ostream where the trip printing is written
+	 * Send 'name' to stream for printing and color the output line blue.
+	 * If 'name' is longer than 13 characters, cut up to 10 characters and append "..." to the end.
+	 * If 'name' is shorter than 13 characters, increase the size to 13
+	 * @param os[in, out] ostream to which the data for printing is sent
 	 */
 	void printName(ostream& os) const override;
 
 	/**
-	 * change end date of the trip and check that the trip will be longer that 1 day
-	 * @param otherDate
-	 * return true if the trip will be longer that 1 day and change old end date
+	 * @return "End date" 
 	 */
-	bool changeEndDate(const Date& otherDate);
-
-	/**
-	 * getter country
-	 * return country
-	 */
-	string getCountry()const;
-
-	/**
-	 * getter endDate
-	 * return Date
-	 */
-	Date getEndDate()const;
-
-	/**
-	 * setter country
-	 * @param otherCountry
-	 */
-	void setCountry(const string& otherCountry);
-
-private:
-	Date endDate;
-	string country;
+	string getEndDateAttribute() const override;
 };
 
 //----------------------------------------------------------

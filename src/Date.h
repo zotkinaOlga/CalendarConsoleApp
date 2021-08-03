@@ -10,13 +10,16 @@
 #include <cstring>
 #include <chrono>
 #include <tuple>
-#define timegm _mkgmtime
+
+#define timegm _mkgmtime ///< for Windows
+
 using namespace std;
 
 /**
  * @class Date
- * represent datum
- * use struct tm
+ * Represent datum and use for it struct tm.
+ * Print day of week, day, month, year, hour and minutes of the date or without time.
+ * Contain overloding the comparison operators: equal to, less than, greater than, less than or equal to, greater than or equal to.
  */
 class Date
 {
@@ -24,7 +27,7 @@ public:
 	Date();
 
 	/**
-	 * contructor Date with time
+	 * Contructor Date
 	 * @param year
 	 * @param month
 	 * @param day
@@ -35,7 +38,7 @@ public:
 	Date(int year, int month, int day, int hour = 0, int minute = 0);
 
 	/**
-	 * conctructor Date: struct tm
+	 * Conctructor Date with only one parametr: struct tm.
 	 * @param t
 	 */
 	Date(const tm& t);
@@ -71,103 +74,70 @@ public:
 	bool operator>=(const Date& x) const;
 
 	/**
-	 * set year
-	 * @param year
-	 */
-	void setYear(int year);
-
-	/**
-	 * set month
-	 * @param month
-	 */
-	void setMonth(int month);
-
-	/**
-	 * set day
-	 * @param day
-	 */
-	void setDay(int day);
-
-	/**
-	 * set hour
-	 * @param hour
-	 */
-	void setHour(int hour);
-
-	/**
-	 * set minute
-	 * @param minute
-	 */
-	void setMinute(int minute);
-
-	/**
-	 * return year
-	 */
-	int getYear() const;
-
-	/**
-	 * return string month
-	 */
-	string getStringMonth() const;
-
-	/**
-	 * return int month [0-11]
-	 */
-	int getIntMonth() const;
-
-	/**
-	 * return day
-	 */
-	int getDay() const;
-
-	/**
-	 * return hour
-	 */
-	int getHour() const;
-
-	/**
-	 * return minute
-	 */
-	int getMinute()const;
-
-	/**
-	 * return int wday [0-6]
-	 */
-	int getIntWday() const;
-
-	/**
-	 * return string wday
-	 */
-	string getWday() const;
-
-	/**
-	 * return struct tm
-	 */
-	tm getStructTm() const;
-
-	/**
-	 * get Sunday in the week that the day is
-	 * return a date that is Sunday in the week that the day is
-	 */
-	Date getSunday() const;
-
-	/**
-	 * add to the day of the second, it changes the date and moves the date forward
-	 * @param sec
+	 * Add to the day of the second to change the date and move the date forward.
+	 * @param sec[in] is a count of seconds to add
 	 */
 	void addSec(int sec);
 
 	/**
-	 * print date
-	 * @param os ostream where date printing is written
+	 * Send variables 'day of week', 'day', 'month' as a string, 'year' and 'hour' and 'minute' to ostream for printing in the format:
+	 * "'day of week' 'day' 'month' 'year' 'hour':'minute'".
+	 * @param os[in, out]
 	 */
-	void printDate(ostream& os) const;
+	void printDateWithTime(ostream& os) const;
+	/**
+	* Send variables 'day of week', 'day', 'month' as a string and 'year' to ostream for printing in the format:
+	* "'day of week' 'day' 'month' 'year'".
+	* @param os[in, out]
+	*/
+	void printDateWithoutTime(ostream& os) const;
 
 	/**
-	 * print time
-	 * @param os ostream where time printing is written
+	 * Send variables 'hour' and 'minute' to ostream for printing in the format:
+	 * "'hour':'minute'".
+	 * @param os[in, out]
 	 */
 	void printTime(ostream& os) const;
+
+	void setYear(int year);
+
+	void setMonth(int month);
+
+	void setDay(int day);
+
+	void setHour(int hour);
+
+	void setMinute(int minute);
+
+	int getYear() const;
+
+	string getStringMonth() const;
+
+	/**
+	 * @return month written as an integer variable in the range [0-11]
+	 */
+	int getIntMonth() const;
+
+	int getDay() const;
+
+	int getHour() const;
+
+	int getMinute()const;
+
+	/**
+	 * @return day of week written as an integer variable in the range [0-6]
+	 */
+	int getIntWday() const;
+
+	string getWday() const;
+
+	tm getStructTm() const;
+
+	/**
+	 * Get Sunday in the week.
+	 * @return a date that is Sunday in the week
+	 */
+	Date getSunday() const;
 private:
 	struct tm ltm;
 };

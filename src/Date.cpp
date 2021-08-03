@@ -136,9 +136,14 @@ void Date::addSec(int sec)
 	timegm(&ltm);
 }
 
-void Date::printDate(ostream& os) const
+void Date::printDateWithTime(ostream& os) const
 {
-	os << put_time(&ltm, "%A %R %d %B %Y") << '\n';
+	os << put_time(&ltm, "%A %d %b %Y %R") << '\n';
+}
+
+void Date::printDateWithoutTime(ostream& os) const
+{
+	os << put_time(&ltm, "%A %d %b %Y") << '\n';
 }
 
 void Date::printTime(ostream& os) const

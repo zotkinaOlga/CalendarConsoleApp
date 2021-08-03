@@ -3,23 +3,21 @@
 
 Calendar::Calendar(){}
 
-bool Calendar::addBirthday(const string& name, const Date& date, repetitionOfAnEvent rep)
+bool Calendar::addTask(const string& name, const Date& date, const Date& deadline, const string& description, repetitionOfAnEvent rep)
 {
-	shared_ptr<Birthday> ptr(new Birthday(name, date, rep));
+	shared_ptr<Task> ptr(new Task(name, date, rep, deadline, description));
 	return calendarEvent.addEvent(ptr);
 }
 
-bool Calendar::addMeeting(const string& name, const Date& startDate, const Date& endTime, const string& place, repetitionOfAnEvent rep)
+bool Calendar::addMeeting(const string& name, const Date& startDate, const Date& endTime, const string& description, repetitionOfAnEvent rep)
 {
-	shared_ptr<Meeting> ptr(new Meeting(name, startDate, rep, endTime, place));
-	calendarMeetings.addMeeting(ptr);
+	shared_ptr<Meeting> ptr(new Meeting(name, startDate, rep, endTime, description));
 	return calendarEvent.addEvent(ptr);
 }
 
-bool Calendar::addTrip(const string& name, const Date& startDate, const Date& endDate, const string& country, repetitionOfAnEvent rep)
+bool Calendar::addTrip(const string& name, const Date& startDate, const Date& endDate, const string& description, repetitionOfAnEvent rep)
 {
-	shared_ptr<Trip> ptr(new Trip(name, startDate, rep, endDate, country));
-	calendarTrips.addTrip(ptr);
+	shared_ptr<Trip> ptr(new Trip(name, startDate, rep, endDate, description));
 	return calendarEvent.addEvent(ptr);
 }
 
@@ -32,7 +30,7 @@ bool Calendar::ifEventExist(const string& nameEvent)
 {
 	return calendarEvent.ifEventExist(nameEvent);
 }
-
+/*
 int Calendar::findInTypeMap(const string& name)
 {
 	if (calendarTrips.ifTripExist(name))
@@ -47,7 +45,7 @@ int Calendar::findInTypeMap(const string& name)
 	{
 		return 1;
 	}
-}
+}*/
 
 bool Calendar::deleteEvent(const string& nameEvent)
 {
@@ -61,44 +59,32 @@ bool Calendar::changeNameEvent(const string& oldName, const string& newName)
 		return false;
 	}
 	calendarEvent.changeNameOf(oldName, newName);
-	calendarMeetings.tryOverwriteName(oldName, newName);
-	calendarTrips.tryOverwriteName(oldName, newName);
 	return true;
 }
 
-bool Calendar::changeDate(const string& nameEvent, const Date& newDate)
+bool Calendar::changeDate(const string& nameEvent, const Date& newDate, ostream& os)
 {
-	return calendarEvent.changeDateOf(nameEvent, newDate);
+	return calendarEvent.changeDateOf(nameEvent, newDate, os);
 }
 
-bool Calendar::changeEndTime(const string& nameMeeting, const Date& endTime)
+bool Calendar::changeEndDate(const string& name, const Date& newDate, ostream &os)
 {
-	return calendarMeetings.changeEndTimeOf(nameMeeting, endTime);
+	return calendarEvent.changeEndDateOf(name, newDate, os);
 }
 
-bool Calendar::changeEndDate(const string& nameTrip, const Date& newDate)
+bool Calendar::changeRepetition(const string& nameEvent, repetitionOfAnEvent newRepetition, ostream &os)
 {
-	return calendarTrips.changeEndDateOf(nameTrip, newDate);
+	return calendarEvent.changeRepetitionOf(nameEvent, newRepetition, os);
 }
 
-bool Calendar::changeRepetition(const string& nameEvent, repetitionOfAnEvent newrep)
+void Calendar::changeDescription(const string& name, const string& newDescription)
 {
-	return calendarEvent.changeRepetitionOf(nameEvent, newrep);
+	calendarEvent.changeDescriptionOf(name, newDescription);
 }
 
-void Calendar::changeCountryOfTrip(const string& nameTrip, const string& newCountry)
+bool Calendar::moveEventForDays(const string& nameEvent, int amountOfDays, ostream& os)
 {
-	calendarTrips.changeCountryOf(nameTrip, newCountry);
-}
-
-void Calendar::changePlaceOfMeeting(const string& nameMeeting, const string& newPlace)
-{
-	calendarMeetings.changePlaceOf(nameMeeting, newPlace);
-}
-
-void Calendar::moveEventForDays(const string& nameEvent, int amountOfDays)
-{
-	calendarEvent.moveDayOf(nameEvent, amountOfDays);
+	return calendarEvent.moveDayOf(nameEvent, amountOfDays, os);
 }
 
 Date Calendar::searchTheEarestFreeDate(const Date& date)
@@ -122,10 +108,11 @@ void Calendar::moveEventToTheEarestFreeDate(const string& eventName)
 	Date freeDate = searchTheEarestFreeDate(startDate);
 	struct tm freeTm = freeDate.getStructTm();
 	int amountOfDays = ceil(difftime(mktime(&freeTm), mktime(&startTm)) / secInDay);
-	calendarEvent.moveDayOf(eventName, amountOfDays);
+	ostringstream oss;
+	calendarEvent.moveDayOf(eventName, amountOfDays, oss);
 }
 
-void Calendar::getDailyCalendar(const Date& date)
+void Calendar::getDailyCalendar(const Date& date, ostream& os)
 {
 	vector<shared_ptr<Event>> dailyEvents;
 	calendarEvent.getAllEventsForDay(date, dailyEvents);
@@ -133,46 +120,47 @@ void Calendar::getDailyCalendar(const Date& date)
 		return x->getDate().getHour() < y->getDate().getHour()
 			|| (x->getDate().getHour() == y->getDate().getHour() && x->getDate().getMinute() < y->getDate().getMinute());
 	});
-	hearderLine(20);
+	hearderLine(20, os);
 	cout << "|";
-	printWhitespace(1);
+	printWhitespace(1, os);
 	struct tm dateTm = date.getStructTm();
-	cout << put_time(&dateTm, "%d %b %Y %a");;
-	printWhitespace(2);
-	cout << "|" << endl;
-	hearderLine(20);
+	os << put_time(&dateTm, "%d %b %Y %a");;
+	printWhitespace(2, os);
+	os << "|" << endl;
+	hearderLine(20, os);
 	for (size_t j = 0; j < dailyEvents.size(); j++)
 	{
-		ostringstream oss;
-		dailyEvents[j]->printName(oss);
+		os << clear << "|";
+		dailyEvents[j]->printName(os);
 		struct tm dateTm = dailyEvents[j]->getDate().getStructTm();
 		int begin, end;
 		getSizeWhitespaces(begin, end, 13, dailyEvents[j]->getName().length());
-		cout << clear << "|" << oss.str(); printWhitespace(begin + end);
-		cout << put_time((&dateTm), "%R") << clear << "|" << endl;
+		printWhitespace(begin + end, os);
+		os << put_time((&dateTm), "%R") << clear << "|" << endl;
 	}
-	cout << clear;
-	hearderLine(20);
+	os << clear;
+	hearderLine(20, os);
 }
 
-void Calendar::getWeeklyCalendar(const Date& date)
+void Calendar::getWeeklyCalendar(const Date& date, ostream& os)
 {
 	vector<vector<shared_ptr<Event>>> weekEvents;
 	weekEvents.resize(7);
 	Date day = date.getSunday();
+	os << boldFront;
 	for (size_t i = 0; i < 7; i++)
 	{
 		calendarEvent.getAllEventsForDay(day, weekEvents[i]);
 		int begin, end;
 		getSizeWhitespaces(begin, end, 10, to_string(day.getDay()).length());
-		cout << "|";
-		printWhitespace(begin);
-		cout << day.getDay();
-		printWhitespace(end);
+		os << "|";
+		printWhitespace(begin, os);
+		os << day.getDay();
+		printWhitespace(end, os);
 		day.setDay(day.getDay() + 1);
 	}
-	cout << "|" << endl;
-	hearderLine(78);
+	os << "|" << clear << endl;
+	hearderLine(78, os);
 	size_t maxSize = 1;
 	for (size_t i = 0; i < 7; i++)
 	{
@@ -196,21 +184,21 @@ void Calendar::getWeeklyCalendar(const Date& date)
 			{
 				s = "";
 			}
-			cout << "|" << setfill(' ') << setw(10) << left << s;
+			os << "|" << setfill(' ') << setw(10) << left << s;
 		}
-		cout << "|" << endl;
+		os << "|" << endl;
 	}
-	hearderLine(78);
+	hearderLine(78, os);
 }
 
-void Calendar::getMonthlyCalendar(const Date& date)
+void Calendar::getMonthlyCalendar(const Date& date, ostream& os)
 {
 	Date start = date;
 	start.setDay(1);
 	start = start.getSunday();
 	while (start.getIntMonth() <= date.getIntMonth() && !(date.getIntMonth() == 11 && start.getIntMonth() == 0))
 	{
-		getWeeklyCalendar(start);
+		getWeeklyCalendar(start, os);
 		start.setDay(start.getDay() + 7);
 	}
 }
@@ -223,40 +211,40 @@ void Calendar::getSizeWhitespaces(int& begin, int& end, int lengthSegment, int l
 	end = WhitespaceSize - begin;
 }
 
-void Calendar::hearderLine(int size) const
+void Calendar::hearderLine(int size, ostream& os) const
 {
-	cout << string(size, '-') << endl;
+	os << string(size, '-') << endl;
 }
 
-void Calendar::printWhitespace(int size) const
+void Calendar::printWhitespace(int size, ostream& os) const
 {
-	cout << string(size, ' ');
+	os << string(size, ' ');
 }
 
-void Calendar::headerMonth(int month) const
+void Calendar::headerMonth(int month, ostream& os) const
 {
-	hearderLine(78);
+	hearderLine(78, os);
 	int begin, end;
 	getSizeWhitespaces(begin, end, 76, vectorMonth[month].length());
-	cout << "|";
-	printWhitespace(begin);
-	cout << vectorMonth[month];
-	printWhitespace(end);
-	cout << "|" << endl;
+	os << "|" << reversionFront;
+	printWhitespace(begin, os);
+	os << vectorMonth[month];
+	printWhitespace(end, os);
+	os << clear << "|" << endl;
 }
 
-void Calendar::headerWdays() const
+void Calendar::headerWdays(ostream& os) const
 {
-	hearderLine(78);
+	hearderLine(78, os);
 	for (const auto& wd : wday)
 	{
 		int begin, end;
 		getSizeWhitespaces(begin, end, 10, wd.length());
-		cout << "|";
-		printWhitespace(begin);
-		cout << wd;
-		printWhitespace(end);
+		os << "|";
+		printWhitespace(begin, os);
+		os << wd;
+		printWhitespace(end, os);
 	}
-	cout << "|" << endl;
-	hearderLine(78);
+	os << "|" << endl;
+	hearderLine(78, os);
 }

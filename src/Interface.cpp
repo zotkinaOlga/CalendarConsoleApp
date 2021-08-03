@@ -34,25 +34,7 @@ bool Interface::processCommand(Calendar& calendar)
 	else if (command == COMMAND_CHANGE)
 	{
 		string name = enterName(calendar);
-		int type = calendar.findInTypeMap(name);
-		switch (type)
-		{
-		case 1:
-		{
-			birthdayChangeMenu(name, calendar);
-			break;
-		}
-		case 2:
-		{
-			meetingChangeMenu(name, calendar);
-			break;
-		}
-		case 3:
-		{
-			tripChangeMenu(name, calendar);
-			break;
-		}
-		}
+		changeMenu(name, calendar);
 	}
 	else if (command == COMMAND_SEARCH)
 	{
@@ -108,19 +90,20 @@ EVENT_TYPE Interface::enterTypeEvent() const
 	{
 		cout << endl << "Enter event`s type:" << endl
 			<< "0. Return to main menu" << endl
-			<< "1. Birthday" << endl
+			<< "1. Task" << endl
 			<< "2. Meeting" << endl
 			<< "3. Trip" << endl;
 		cin >> type;
 		if (checkCin(cin) && checkCommand(type, '3')) 
 		{
 			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n'); return (EVENT_TYPE)(type - '0');
+			cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+			return (EVENT_TYPE)(type - '0');
 		}
 	}
 }
 
-string Interface::enterName(Calendar& calendar)
+string Interface::enterName(Calendar& calendar) const
 {
 	string name;
 	cout << endl << "Enter event`s name: " << endl;
@@ -134,12 +117,12 @@ string Interface::enterName(Calendar& calendar)
 	return name;
 }
 
-Date Interface::enterDateWithTime(const string& typeDate)
+Date Interface::enterDateWithTime(const string& typeDate) const
 {
 	tm t = {};
 	do
 	{
-		cout << endl << "Enter " << typeDate << " date (e.g. 20.02.2020 00:01):" << endl;
+		cout << endl << "Enter " << typeDate << " (e.g. 20.02.2020 00:01):" << endl;
 		t = {};
 		cin >> get_time(&t, "%d.%m.%Y %R");
 	} while (!checkCin(cin) || !ifTmValid(t));
@@ -148,7 +131,7 @@ Date Interface::enterDateWithTime(const string& typeDate)
 	return Date(t);
 }
 
-Date Interface::enterDateWithoutTime(const string& typeDate)
+Date Interface::enterDateWithoutTime(const string& typeDate) const
 {
 	struct tm t = {};
 	do
@@ -177,7 +160,7 @@ bool Interface::ifTmValid(struct tm t) const
 	return true;
 }
 
-Date Interface::enterEndTime(struct tm t)
+Date Interface::enterEndTime(struct tm t) const
 {
 	do
 	{
@@ -189,15 +172,15 @@ Date Interface::enterEndTime(struct tm t)
 	return Date(t);
 }
 
-string Interface::enterString(const string& proPrint)
+string Interface::enterString(const string& forPrint) const
 {
 	string s;
-	cout << endl << "Enter " << proPrint << endl;
+	cout << endl << "Enter " << forPrint << endl;
 	getline(cin, s);
 	return s;
 }
 
-int Interface::enterAmountOfDay()
+int Interface::enterAmountOfDay() const
 {
 	int amountOfDay;
 	while (true)
@@ -213,7 +196,7 @@ int Interface::enterAmountOfDay()
 	}
 }
 
-repetitionOfAnEvent Interface::enterRepetition()
+repetitionOfAnEvent Interface::enterRepetition() const
 {
 	char rep;
 	while (true)
@@ -230,28 +213,6 @@ repetitionOfAnEvent Interface::enterRepetition()
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			return (repetitionOfAnEvent)(rep - '0');
-		}
-	}
-}
-
-repetitionOfAnEvent Interface::enterRepetitionTrip(const Date& startDate, const Date& endDate)
-{
-	while (true)
-	{
-		repetitionOfAnEvent newRepetition = enterRepetition();
-		struct tm endTm = endDate.getStructTm();
-		struct tm startTm = startDate.getStructTm();
-		auto timeDifference = difftime(timegm(&endTm), timegm(&startTm));
-		if ((newRepetition == yearly && timeDifference > secInYear)
-			|| (newRepetition == monthly && timeDifference > secInTheSmallestMonth)
-			|| (newRepetition == weekly && timeDifference > secInWeek)
-			|| (newRepetition == daily && timeDifference > secInDay))
-		{
-			cout << "Trip conflicts with dates by itself" << endl;
-		}
-		else
-		{
-			return newRepetition;
 		}
 	}
 }
@@ -286,7 +247,7 @@ void Interface::addMenu(Calendar& calendar)
 	EVENT_TYPE type = enterTypeEvent();
 	if (type == BIRTHDAY)
 	{
-		addBirthdayMenu(calendar);
+		addTaskMenu(calendar);
 	}
 	else if (type == MEETING)
 	{
@@ -299,7 +260,7 @@ void Interface::addMenu(Calendar& calendar)
 	else return;
 }
 
-string Interface::enterNameNewEvent(Calendar& calendar)
+string Interface::enterNameNewEvent(Calendar& calendar) const
 {
 	string name;
 	cout << endl << "Enter name of new event:" << endl;
@@ -313,17 +274,26 @@ string Interface::enterNameNewEvent(Calendar& calendar)
 	return name;
 }
 
-void Interface::addBirthdayMenu(Calendar& calendar)
+void Interface::addTaskMenu(Calendar& calendar)
 {
 	string name = enterNameNewEvent(calendar);
-	Date startDate(enterDateWithoutTime(""));
-	calendar.addBirthday(name, startDate, yearly);
+	Date startDate(enterDateWithTime("start date"));
+	Date endDate = enterDateWithTime("deadline");
+	struct tm startTm = startDate.getStructTm();
+	struct tm endTm = endDate.getStructTm();
+	while (difftime(timegm(&endTm), timegm(&startTm)) < 1)
+	{
+		cout << "The deadline comes before the start" << endl;
+		Date endDate = enterDateWithTime("deadline");
+		endTm = endDate.getStructTm();
+	}
+	calendar.addTask(name, startDate, endDate, enterString("description:"), enterRepetition());
 }
 
 void Interface::addMeetingMenu(Calendar& calendar)
 {
 	string name = enterNameNewEvent(calendar);
-	Date startDate(enterDateWithTime("start"));
+	Date startDate(enterDateWithTime("start date"));
 	Date endTime = enterEndTime(startDate.getStructTm());
 	struct tm startTm = startDate.getStructTm();
 	struct tm endTm = endTime.getStructTm();
@@ -333,23 +303,33 @@ void Interface::addMeetingMenu(Calendar& calendar)
 		endTime = enterEndTime(startDate.getStructTm());
 		endTm = endTime.getStructTm();
 	}
-	calendar.addMeeting(name, startDate, endTime, enterString("place:"), enterRepetition());
+	calendar.addMeeting(name, startDate, endTime, enterString("description:"), enterRepetition());
 }
 
 void Interface::addTripMenu(Calendar& calendar)
 {
 	string name = enterNameNewEvent(calendar);
-	Date startDate(enterDateWithTime("start"));
-	Date endDate = enterDateWithTime("end");
+	Date startDate(enterDateWithTime("start date"));
+	Date endDate = enterDateWithTime("end date");
 	struct tm startTm = startDate.getStructTm();
 	struct tm endTm = endDate.getStructTm();
 	while (difftime(timegm(&endTm), timegm(&startTm)) < secInDay)
 	{
 		cout << "Start date is more then end time or trip is less then one day" << endl;
-		Date endDate = enterDateWithTime("end");
+		Date endDate = enterDateWithTime("date end");
 		endTm = endDate.getStructTm();
 	}
-	calendar.addTrip(name, startDate, endDate, enterString("country:"), enterRepetitionTrip(startDate, endDate));
+	auto timeDifference = difftime(timegm(&endTm), timegm(&startTm));
+	repetitionOfAnEvent r = enterRepetition();
+	while ((r == yearly && timeDifference > secInYear)
+		|| (r == monthly && timeDifference > secInTheSmallestMonth)
+		|| (r == weekly && timeDifference > secInWeek)
+		|| (r == daily && timeDifference > secInDay))
+	{
+		cout << "Trip conflicts with dates by itself" << endl;
+		r = enterRepetition();
+	}
+	calendar.addTrip(name, startDate, endDate, enterString("description:"), r);
 }
 
 void Interface::deleteMenu(Calendar& calendar)
@@ -360,9 +340,23 @@ void Interface::deleteMenu(Calendar& calendar)
 void Interface::moveMenu(Calendar& calendar)
 {
 	MOVE_COMMAND moveCom = printMoveMenu();
-	if (moveCom == MOVE_SD) calendar.moveEventForDays(enterName(calendar), enterAmountOfDay());
-	else if (moveCom == MOVE_FD) calendar.moveEventToTheEarestFreeDate(enterName(calendar));
-	else return;
+	ostringstream oss;
+	string nameEvent = enterName(calendar);
+	if (moveCom == MOVE_SD)
+	{
+		while (!calendar.moveEventForDays(nameEvent, enterAmountOfDay(), oss))
+		{
+			cout << oss.str();
+		}
+	}
+	else if (moveCom == MOVE_FD)
+	{
+		calendar.moveEventToTheEarestFreeDate(nameEvent);
+	}
+	else
+	{
+		return;
+	}
 }
 
 MOVE_COMMAND Interface::printMoveMenu() const
@@ -380,68 +374,28 @@ MOVE_COMMAND Interface::printMoveMenu() const
 	return (MOVE_COMMAND)(moveCom - '0');
 }
 
-void Interface::birthdayChangeMenu(const string& name, Calendar& calendar)
+void Interface::changeMenu(const string& name, Calendar& calendar)
 {
-	CHANGE_COMMAND changeCom = printBirthdayChangeMenu();
+	CHANGE_COMMAND changeCom = printChangeMenu(calendar.findEvent(name));
 	if (changeCom == CHANGE_NAME)
 	{
 		changeName(name, calendar);
 	}
 	else if (changeCom == CHANGE_START_DATE)
 	{
-		calendar.changeDate(name, enterDateWithoutTime(""));
-	}
-	else
-	{
-		return;
-	}
-}
-
-CHANGE_COMMAND Interface::printBirthdayChangeMenu() const
-{
-	char changeCom;
-	do
-	{
-		cout << endl << "You can change:" << endl
-			<< "0. Return to main menu" << endl
-			<< "1. Name" << endl
-			<< "2. Date" << endl;
-		cin >> changeCom;
-	} while (!checkCin(cin) || !checkCommand(changeCom, '2'));
-	cin.clear();
-	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	return (CHANGE_COMMAND)(changeCom - '0');
-}
-
-void Interface::meetingChangeMenu(const string& name, Calendar& calendar)
-{
-	CHANGE_COMMAND changeCom = printMeetingChangeMenu();
-	if (changeCom == CHANGE_NAME)
-	{
-		changeName(name, calendar);
-	}
-	else if (changeCom == CHANGE_START_DATE)
-	{
-		calendar.changeDate(name, enterDateWithTime("start"));
+		changeStartDate(name, calendar);
 	}
 	else if (changeCom == CHANGE_END)
 	{
-		tm t = {};
-		Date endTime = enterEndTime(t);
-		while (!calendar.changeEndTime(name, endTime))
-		{
-			cout << "Meeting is less then 10 minutes" << endl;
-			t = {};
-			endTime = enterEndTime(t);
-		}
+		changeEndDate(name, calendar);
 	}
 	else if (changeCom == CHANGE_REPETITION)
 	{
-		calendar.changeRepetition(name, enterRepetition());
+		changeRepetition(name, calendar);
 	}
-	else if (changeCom == CHANGE_PLACE)
+	else if (changeCom == CHANGE_DESCRIPTION)
 	{
-		calendar.changePlaceOfMeeting(name, enterString("new place:"));
+		changeDescription(name, calendar);
 	}
 	else
 	{
@@ -449,76 +403,16 @@ void Interface::meetingChangeMenu(const string& name, Calendar& calendar)
 	}
 }
 
-CHANGE_COMMAND Interface::printMeetingChangeMenu() const
+CHANGE_COMMAND Interface::printChangeMenu(const shared_ptr<Event> ptr) const
 {
 	char changeCom;
+	ostringstream oss;
+	ptr->printAttribute(oss);
 	do
 	{
 		cout << endl << "You can change:" << endl
 			<< "0. Return to main menu" << endl
-			<< "1. Name" << endl
-			<< "2. Start date" << endl
-			<< "3. End time" << endl
-			<< "4. Repetition" << endl
-			<< "5. Place" << endl;
-		cin >> changeCom;
-	} while (!checkCin(cin) || !checkCommand(changeCom, '5'));
-	cin.clear();
-	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	return (CHANGE_COMMAND)(changeCom - '0');
-}
-
-void Interface::tripChangeMenu(const string& name, Calendar& calendar)
-{
-	CHANGE_COMMAND changeCom = printTripChangeMenu();
-	if (changeCom == CHANGE_NAME)
-	{
-		changeName(name, calendar);
-	}
-	else if (changeCom == CHANGE_START_DATE)
-	{
-		calendar.changeDate(name, enterDateWithTime("start"));
-	}
-	else if (changeCom == CHANGE_END)
-	{
-		Date date = enterDateWithTime("end");
-		while (!calendar.changeEndDate(name, date))
-		{
-			cout << "Trip is less then 1 day" << endl;
-			date = enterDateWithTime("end");
-		}
-	}
-	else if (changeCom == CHANGE_REPETITION)
-	{
-		repetitionOfAnEvent newRep = enterRepetition();
-		while (!calendar.changeRepetition(name, newRep))
-		{
-			cout << "Trip conflicts with dates by itself" << endl;
-			newRep = enterRepetition();
-		}
-	}
-	else if (changeCom == CHANGE_COUNTRY)
-	{
-		calendar.changeCountryOfTrip(name, enterString("new country:"));
-	}
-	else
-	{
-		return;
-	}
-}
-
-CHANGE_COMMAND Interface::printTripChangeMenu() const
-{
-	char changeCom;
-	do
-	{
-		cout << endl << "You can change:" << endl
-			<< "0. Return to main menu" << endl
-			<< "1. Name" << endl
-			<< "2. Start date" << endl
-			<< "3. End time" << endl
-			<< "4. Repetition" << endl
-			<< "5. Destination country" << endl;
+			<< oss.str();
 		cin >> changeCom;
 	} while (!checkCin(cin) || !checkCommand(changeCom, '5'));
 	cin.clear();
@@ -536,23 +430,79 @@ void Interface::changeName(const string& oldName, Calendar& calendar)
 	}
 }
 
-void Interface::searchMenu(Calendar& calendar)
+void Interface::changeStartDate(const string& name, Calendar& calendar)
+{
+	ostringstream oss;
+	Date dateS(enterDateWithTime("start date"));
+	while (!calendar.changeDate(name, dateS, oss))
+	{
+		cout << oss.str();
+		dateS = enterDateWithoutTime("start date");
+	}
+}
+
+void Interface::changeEndDate(const string& name, Calendar& calendar)
+{
+	auto it = calendar.findEvent(name);
+	string endAttribute = it->getEndDateAttribute();
+	if (endAttribute == "End time")
+	{
+		changeEndTime(it, name, calendar);
+	}
+	else
+	{
+		changeEndWholeDate(name, endAttribute, calendar);
+	}
+}
+
+void Interface::changeEndTime(shared_ptr<Event> itEvent, const string& name, Calendar& calendar)
+{
+	ostringstream oss;
+	Date timeE = enterEndTime(itEvent->getDate().getStructTm());
+	while (!calendar.changeEndDate(name, timeE, oss))
+	{
+		cout << oss.str();
+		timeE = enterEndTime(itEvent->getDate().getStructTm());
+	}
+}
+
+void Interface::changeEndWholeDate(const string& name, const string& endAttribute, Calendar& calendar)
+{
+	ostringstream oss;
+	Date dateE = enterDateWithTime(endAttribute);
+	while (!calendar.changeEndDate(name, dateE, oss))
+	{
+		cout << oss.str();
+		dateE = enterDateWithTime(endAttribute);
+	}
+}
+
+void Interface::changeRepetition(const string& name, Calendar& calendar)
+{
+	ostringstream oss;
+	repetitionOfAnEvent r = enterRepetition();
+	while (!calendar.changeRepetition(name, r, oss))
+	{
+		cout << oss.str();
+		r = enterRepetition();
+	}
+}
+
+void Interface::changeDescription(const string& name, Calendar& calendar)
+{
+	calendar.changeDescription(name, enterString("new description:"));
+}
+
+void Interface::searchMenu(Calendar& calendar) const
 {
 	SEARCH_COMMAND searchCom = printSearchMenu();
 	if (searchCom == SEARCH_EVENT)
 	{
-		string name = enterName(calendar);
-		ostringstream oss;
-		cout << endl;
-		calendar.findEvent(name)->print(oss);
-		cout << oss.str();
+		searchFreeDay(calendar);
 	}
 	else if (searchCom == SEARCH_FD)
 	{
-		Date freeDate = calendar.searchTheEarestFreeDate(enterDateWithoutTime(""));
-		ostringstream oss;
-		freeDate.printDate(oss);
-		cout << "The earlest free day is " << oss.str() << endl;
+		searchFreeDay(calendar);
 	}
 	else
 	{
@@ -576,27 +526,37 @@ SEARCH_COMMAND Interface::printSearchMenu() const
 	return (SEARCH_COMMAND)(searchCom - '0');
 }
 
-void Interface::printMenu(Calendar& calendar)
+void Interface::searchEvent(Calendar& calendar) const
+{
+	string name = enterName(calendar);
+	ostringstream oss;
+	cout << endl;
+	calendar.findEvent(name)->print(oss);
+	cout << oss.str();
+}
+
+void Interface::searchFreeDay(Calendar& calendar) const
+{
+	Date freeDate = calendar.searchTheEarestFreeDate(enterDateWithoutTime(""));
+	ostringstream oss;
+	freeDate.printDateWithoutTime(oss);
+	cout << "The earlest free day is " << oss.str() << endl;
+}
+
+void Interface::printMenu(Calendar& calendar) const
 {
 	CALENDAR_TYPE typeCalendar = printPrintMenu();
 	if (typeCalendar == C_DAILY)
 	{
-		Date date = enterDateWithoutTime("");
-		calendar.getDailyCalendar(date);
+		printDailyCalendar(calendar);
 	}
 	else if (typeCalendar == C_WEEKLY)
 	{
-		Date date = enterDateWithoutTime("");
-		calendar.headerMonth(date.getIntMonth());
-		calendar.headerWdays();
-		calendar.getWeeklyCalendar(date);
+		printWeeklyCalendar(calendar);
 	}
 	else if (typeCalendar == C_MONTHLY)
 	{
-		Date date = enterDateWithoutTime("");
-		calendar.headerMonth(date.getIntMonth());
-		calendar.headerWdays();
-		calendar.getMonthlyCalendar(date);
+		printMonthlyCalendar(calendar);
 	}
 	else
 	{
@@ -621,7 +581,35 @@ CALENDAR_TYPE Interface::printPrintMenu() const
 	return (CALENDAR_TYPE)(typeCalendar - '0');
 }
 
-void Interface::exportMenu(Calendar& calendar)
+void Interface::printDailyCalendar(Calendar& calendar) const
+{
+	ostringstream oss;
+	Date date = enterDateWithoutTime("");
+	calendar.getDailyCalendar(date, oss);
+	cout << oss.str();
+}
+
+void Interface::printWeeklyCalendar(Calendar& calendar) const
+{
+	ostringstream oss;
+	Date date = enterDateWithoutTime("");
+	calendar.headerMonth(date.getIntMonth(), oss);
+	calendar.headerWdays(oss);
+	calendar.getWeeklyCalendar(date, oss);
+	cout << oss.str();
+}
+
+void Interface::printMonthlyCalendar(Calendar& calendar) const
+{
+	ostringstream oss;
+	Date date = enterDateWithoutTime("");
+	calendar.headerMonth(date.getIntMonth(), oss);
+	calendar.headerWdays(oss);
+	calendar.getMonthlyCalendar(date, oss);
+	cout << oss.str();
+}
+
+void Interface::exportMenu(Calendar& calendar) const
 {
 	string name = enterName(calendar);
 	auto it = calendar.findEvent(name);
@@ -649,7 +637,7 @@ void Interface::importMenu(Calendar& calendar)
 		getline(file, type);
 		if (type == birthdayType)
 		{
-			if (!importBirthday(calendar, file))
+			if (!importTask(calendar, file))
 			{
 				cout << "Error" << endl;
 				break;
@@ -683,22 +671,31 @@ void Interface::importMenu(Calendar& calendar)
 	file.close();
 }
 
-bool Interface::importBirthday(Calendar& calendar, ifstream& file)
+bool Interface::importTask(Calendar& calendar, ifstream& file)
 {
-	string name, s_date;
+	string name, s_date, deadline, description, repetition;
 	getline(file, name);
 	getline(file, s_date);
 	istringstream oss(s_date);
 	struct tm t = {};
-	oss >> get_time(&t, "%d.%m.%Y");
+	oss >> get_time(&t, "%d.%m.%Y %H:%M");
 	if (oss.fail() || !ifTmValid(t)) return false;
-	Date date(t);
-	return calendar.addBirthday(name, date, yearly);
+	Date startDate(t);
+	istringstream end(deadline);
+	struct tm endTm = {};
+	end >> get_time(&endTm, "%d.%m.%Y %H:%M");
+	if (end.fail() || !ifTmValid(endTm)) return false;
+	struct tm startTm = startDate.getStructTm();
+	if (difftime(timegm(&endTm), timegm(&startTm)) < 1) return false;
+	Date deadlineDate(endTm);
+	getline(file, description);
+	getline(file, repetition);
+	return calendar.addTask(name, startDate, deadlineDate, description, getRepetition(repetition));
 }
 
 bool Interface::importMeeting(Calendar& calendar, ifstream& file)
 {
-	string name, s_date, s_endTime, place, repetition;
+	string name, s_date, s_endTime, description, repetition;
 	getline(file, name);
 	getline(file, s_date);
 	istringstream oss(s_date);
@@ -714,14 +711,14 @@ bool Interface::importMeeting(Calendar& calendar, ifstream& file)
 	struct tm startTm = startDate.getStructTm();
 	if (difftime(timegm(&endTm), timegm(&startTm)) < secInTenMinutes) return false;
 	Date endTime(endTm);
-	getline(file, place);
+	getline(file, description);
 	getline(file, repetition);
-	return calendar.addMeeting(name, startDate, endTime, place, getRepetition(repetition));
+	return calendar.addMeeting(name, startDate, endTime, description, getRepetition(repetition));
 }
 
 bool Interface::importTrip(Calendar& calendar, ifstream& file)
 {
-	string name, s_date, dateEnd, country, repetition;
+	string name, s_date, dateEnd, description, repetition;
 	getline(file, name);
 	getline(file, s_date);
 	istringstream oss(s_date);
@@ -737,12 +734,12 @@ bool Interface::importTrip(Calendar& calendar, ifstream& file)
 	struct tm startTm = startDate.getStructTm();
 	if (difftime(timegm(&endTm), timegm(&startTm)) < secInDay) return false;
 	Date endDate(endTm);
-	getline(file, country);
+	getline(file, description);
 	getline(file, repetition);
-	return calendar.addTrip(name, startDate, endDate, country, getRepetition(repetition));
+	return calendar.addTrip(name, startDate, endDate, description, getRepetition(repetition));
 }
 
-repetitionOfAnEvent Interface::getRepetition(const string& s)
+repetitionOfAnEvent Interface::getRepetition(const string& s) const
 {
 	if (s == m_daily)
 	{
